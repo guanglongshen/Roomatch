@@ -1,4 +1,4 @@
-QT += widgets
+QT += widgets sql
 
 CONFIG += c++17
 
@@ -25,3 +25,6 @@ CONFIG += embed_translations
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+RESOURCES += \
+    res.qrc
