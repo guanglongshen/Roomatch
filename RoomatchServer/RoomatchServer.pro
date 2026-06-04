@@ -9,15 +9,18 @@ CONFIG += c++17
 SOURCES += \
     databasemanager.cpp \
     databaseworker.cpp \
+    loginwidget.cpp \
     main.cpp \
     serverwindow.cpp
 
 HEADERS += \
     databasemanager.h \
     databaseworker.h \
+    loginwidget.h \
     serverwindow.h
 
 FORMS += \
+    loginwidget.ui \
     serverwindow.ui
 
 TRANSLATIONS += \
