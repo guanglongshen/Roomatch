@@ -1,0 +1,34 @@
+#include "databasemanager.h"
+
+
+DatabaseManager* DatabaseManager::instance() {
+    static DatabaseManager inst;
+    return &inst;
+}
+
+DatabaseManager::~DatabaseManager() {
+    // 线程如果还在运行，那么阻塞等待，直到线程退出成功
+    if (managerThread->isRunning()) {
+        managerThread->quit();
+        managerThread->wait();
+    }
+}
+
+void DatabaseManager::startService() {
+    if (!managerThread->isRunning()) {
+        managerThread->start();
+    }
+}
+
+DatabaseManager::DatabaseManager() {
+    // 创建后台 worker 线程
+    managerThread = new QThread(this);
+    worker = new DatabaseWorker();
+    worker->moveToThread(managerThread);
+
+    // worker 与 manager 信号连接
+    connect(managerThread, &QThread::started, worker, &DatabaseWorker::onInitializeDatabase);
+    connect(managerThread, &QThread::finished, worker, &QObject::deleteLater);
+
+    connect(worker, &DatabaseWorker::logMessage, this, &DatabaseManager::logNotify);
+}

@@ -7,10 +7,14 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    databasemanager.cpp \
+    databaseworker.cpp \
     main.cpp \
     serverwindow.cpp
 
 HEADERS += \
+    databasemanager.h \
+    databaseworker.h \
     serverwindow.h
 
 FORMS += \
