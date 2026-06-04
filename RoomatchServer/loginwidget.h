@@ -12,6 +12,14 @@ public:
     explicit LoginWidget(QWidget *parent = nullptr);
     ~LoginWidget();
 
+    // 获取用户名昵称
+    QString getUsername() const;
+    // 获取明文密码
+    QString getPassword() const;
+
+signals:
+    void toRegisterPage();
+
 private:
     Ui::LoginWidget *ui;
 };

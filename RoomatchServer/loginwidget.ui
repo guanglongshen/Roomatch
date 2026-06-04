@@ -104,7 +104,11 @@
       </layout>
      </item>
      <item row="2" column="2">
-      <widget class="QLineEdit" name="pwdEdit"/>
+      <widget class="QLineEdit" name="pwdEdit">
+       <property name="echoMode">
+        <enum>QLineEdit::EchoMode::Password</enum>
+       </property>
+      </widget>
      </item>
      <item row="0" column="1" colspan="2">
       <widget class="QLabel" name="picLabel">

@@ -5,6 +5,11 @@ LoginWidget::LoginWidget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::LoginWidget) {
     ui->setupUi(this);
+
+    // 点击注册按钮，发出信号，让主窗口跳转到 RegisterPage 页面
+    connect(ui->registerBtn, &QPushButton::clicked, this, [this](){
+        emit toRegisterPage();
+    });
 }
 
 LoginWidget::~LoginWidget() {

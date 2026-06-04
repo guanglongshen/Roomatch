@@ -11,16 +11,19 @@ SOURCES += \
     databaseworker.cpp \
     loginwidget.cpp \
     main.cpp \
+    registerwidget.cpp \
     serverwindow.cpp
 
 HEADERS += \
     databasemanager.h \
     databaseworker.h \
     loginwidget.h \
+    registerwidget.h \
     serverwindow.h
 
 FORMS += \
     loginwidget.ui \
+    registerwidget.ui \
     serverwindow.ui
 
 TRANSLATIONS += \
@@ -35,3 +38,13 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     res.qrc
+
+# 链接 RoomatchCommon 静态库
+# 1. 告诉编译器去哪里找公共库的头文件 (.h)
+INCLUDEPATH += $$PWD/../RoomatchCommon
+DEPENDPATH  += $$PWD/../RoomatchCommon
+
+# 2. 告诉编译器去哪里找静态库文件，并将其链接进来
+# -L 参数指定库文件所在的文件夹路径（对应 Common 里的 DESTDIR）
+# -l 参数指定库的名称（注意：去掉前缀 "lib" 和后缀 ".a"/".lib"）
+LIBS += -L$$PWD/../RoomatchCommon/lib -lRoomatchCommon
