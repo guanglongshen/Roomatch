@@ -2,6 +2,8 @@
 #include "ui_serverwindow.h"
 #include "databasemanager.h"
 
+#include "networkmanager.h"
+
 #include <QStatusBar>
 
 ServerWindow::ServerWindow(QWidget *parent)
@@ -46,6 +48,12 @@ ServerWindow::ServerWindow(QWidget *parent)
         logKeeper->raise();
         logKeeper->activateWindow();
     });
+
+
+    // // 网络测试
+    // NetworkManager *netMgr = NetworkManager::instance();
+    // connect(netMgr, &NetworkManager::logNotify, logKeeper, &LogKeeper::addSystemLog);
+    // netMgr->startService();
 }
 
 ServerWindow::~ServerWindow() {

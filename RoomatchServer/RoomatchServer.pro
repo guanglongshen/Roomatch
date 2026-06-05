@@ -1,4 +1,4 @@
-QT += widgets sql
+QT += widgets sql network
 
 CONFIG += c++17
 
@@ -12,6 +12,8 @@ SOURCES += \
     loginwidget.cpp \
     logkeeper.cpp \
     main.cpp \
+    networkmanager.cpp \
+    networkworker.cpp \
     registerwidget.cpp \
     serverwindow.cpp
 
@@ -20,6 +22,8 @@ HEADERS += \
     databaseworker.h \
     loginwidget.h \
     logkeeper.h \
+    networkmanager.h \
+    networkworker.h \
     registerwidget.h \
     serverwindow.h
 
