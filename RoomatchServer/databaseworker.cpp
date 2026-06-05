@@ -38,16 +38,13 @@ void DatabaseWorker::onInitializeDatabase() {
         )";
 
         if (query.exec(createTableSql)) {
-            emit logMessage(tr("账户数据表创建成功！"));
+            emit logMessage(tr("account 数据表创建"), "ok", "Database");
         } else {
-            QString error = tr("账户数据表创建失败，详细：") + db.lastError().text();
-            emit logMessage(error);
+            emit logMessage(tr("account 数据表创建"), db.lastError().text(), "Database");
             return ;
         }
     } else {
-        QString error = tr("数据库打开失败，详细：") + db.lastError().text();
-        emit logMessage(error);
-        qDebug() << "Database open failed:" << db.lastError().text();
+        emit logMessage(tr("数据库"), db.lastError().text(), "Database");
     }
 }
 
@@ -55,7 +52,7 @@ void DatabaseWorker::onRegisterUser(const USERINFO &registerInfo) {
     QSqlDatabase db = QSqlDatabase::database("database_worker");
 
     if (!db.isOpen()) {
-        qDebug() << "数据库异常！无法注册用户...";
+        emit logMessage(tr("数据库"), db.lastError().text(), "Database");
         return ;
     }
 
@@ -66,7 +63,7 @@ void DatabaseWorker::onRegisterUser(const USERINFO &registerInfo) {
     query.bindValue(":type", registerInfo.type);
 
     if (!query.exec() || !query.next()) {
-        qDebug() << "数据库查询失败，详细" << query.lastError().text();
+        emit logMessage(tr("用户查询"), db.lastError().text(), "Database");
         return ;
     }
 
@@ -74,6 +71,7 @@ void DatabaseWorker::onRegisterUser(const USERINFO &registerInfo) {
     if (query.value(0).toInt() > 0) {
         STATUS status = { 1, tr("注册失败，已存在同名用户！") };
         emit registerUserResponse(status);
+        emit logMessage(tr("注册教师用户"), status.info, "Database");
         return ;
     }
 
@@ -83,10 +81,11 @@ void DatabaseWorker::onRegisterUser(const USERINFO &registerInfo) {
     query.bindValue(":type", registerInfo.type);
 
     if (!query.exec()) {
-        qDebug() << "注册用户失败，详细" << query.lastError().text();
+        emit logMessage(tr("注册教师用户"), db.lastError().text(), "Database");
         return ;
     }
 
     STATUS ok = { 0, tr("成功注册用户: %1-教师。").arg(registerInfo.username) };
+    emit logMessage(tr("注册教师用户"), "ok", "Database");
     emit registerUserResponse(ok);
 }

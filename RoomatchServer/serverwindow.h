@@ -1,6 +1,8 @@
 #ifndef SERVERWINDOW_H
 #define SERVERWINDOW_H
 
+#include "logkeeper.h"
+
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
@@ -16,5 +18,6 @@ public:
 
 private:
     Ui::ServerWindow *ui;
+    LogKeeper *logKeeper = nullptr;
 };
 #endif // SERVERWINDOW_H

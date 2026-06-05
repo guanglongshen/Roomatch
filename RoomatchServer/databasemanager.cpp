@@ -30,6 +30,7 @@ DatabaseManager::DatabaseManager() {
     connect(managerThread, &QThread::started, worker, &DatabaseWorker::onInitializeDatabase);
     connect(managerThread, &QThread::finished, worker, &QObject::deleteLater);
 
+    // worker 所有的 log 日志都会同步给 Manager
     connect(worker, &DatabaseWorker::logMessage, this, &DatabaseManager::logNotify);
 
     // 注册用户信号与槽

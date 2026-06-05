@@ -16,7 +16,7 @@ public:
     void onRegisterUser(const USERINFO &registerInfo);
 signals:
     // 所有对数据库核心操作返回的信息
-    void logMessage(const QString &msg);
+    void logMessage(const QString &event, const QString &statusText, const QString &source);
 
     // 注册用户返回状态
     void registerUserResponse(const STATUS &code);

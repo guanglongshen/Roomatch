@@ -10,6 +10,7 @@ SOURCES += \
     databasemanager.cpp \
     databaseworker.cpp \
     loginwidget.cpp \
+    logkeeper.cpp \
     main.cpp \
     registerwidget.cpp \
     serverwindow.cpp
@@ -18,11 +19,13 @@ HEADERS += \
     databasemanager.h \
     databaseworker.h \
     loginwidget.h \
+    logkeeper.h \
     registerwidget.h \
     serverwindow.h
 
 FORMS += \
     loginwidget.ui \
+    logkeeper.ui \
     registerwidget.ui \
     serverwindow.ui
 

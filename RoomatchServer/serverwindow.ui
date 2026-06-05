@@ -39,14 +39,14 @@
     <property name="title">
      <string>控制中心(&amp;C)</string>
     </property>
-    <addaction name="actionLog_Panel"/>
+    <addaction name="actionLogKeeper"/>
    </widget>
    <addaction name="menu"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionLog_Panel">
+  <action name="actionLogKeeper">
    <property name="text">
-    <string>日志信息</string>
+    <string>日志记录</string>
    </property>
   </action>
  </widget>

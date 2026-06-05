@@ -17,7 +17,7 @@ public:
 
 signals:
     // 日志通知
-    void logNotify(const QString &logMsg);
+    void logNotify(const QString &event, const QString &statusText, const QString &source);
 
     // 注册用户请求
     void registerRequest(const USERINFO &registerInfo);
