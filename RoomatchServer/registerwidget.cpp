@@ -1,7 +1,9 @@
 #include "registerwidget.h"
 #include "ui_registerwidget.h"
 #include "tools.h"
+#include "databasemanager.h"
 
+#include <QMessageBox>
 #include <QRegularExpression>
 #include <QRegularExpressionValidator>
 #include <QTimer>
@@ -39,6 +41,22 @@ RegisterWidget::RegisterWidget(QWidget *parent)
 
     rewriteForm();
 
+    // 监听 manager 传回的注册结果
+    connect(DatabaseManager::instance(), &DatabaseManager::registerResult, this, [this](const STATUS &status){
+        // 接收注册后的结果才能复原按键
+        ui->registerBtn->setEnabled(true);
+
+        if (status.code == 0) {
+            // 成功注册
+            QMessageBox::information(this, tr("注册成功"), tr("用户注册成功，即将前往登录页面！"));
+            emit ui->clearBtn->clicked(true);       // 成功查询，则清空输入框
+            emit toLoginPage();
+        } else {
+            QMessageBox::warning(this, tr("注册失败"), status.info);
+            ui->tipLabel->setText(ui->tipLabel->text() + QString("<br/><span style='color: #e74c3c; font-weight: bold;'>%1</span>").arg(status.info));
+        }
+    });
+
     // 提交注册按钮
     connect(ui->registerBtn, &QPushButton::clicked, this, [this](){
         QString username = ui->usernameEdit->text();
@@ -66,6 +84,8 @@ RegisterWidget::RegisterWidget(QWidget *parent)
         ui->registerBtn->setEnabled(false);
 
         QString hashedPwd = Tools::encryptPassword(pwd);
+        USERINFO info = { username, hashedPwd, 0 };
+        emit DatabaseManager::instance()->registerRequest(info);
     });
 }
 

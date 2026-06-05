@@ -4,6 +4,7 @@
 #include "databaseworker.h"
 #include <QObject>
 #include <QThread>
+#include <tools.h>
 
 class DatabaseManager : public QObject {
     Q_OBJECT
@@ -15,7 +16,13 @@ public:
     void startService();
 
 signals:
+    // 日志通知
     void logNotify(const QString &logMsg);
+
+    // 注册用户请求
+    void registerRequest(const USERINFO &registerInfo);
+    // 注册用户结果
+    void registerResult(const STATUS &status);
 
 private:
     DatabaseManager();

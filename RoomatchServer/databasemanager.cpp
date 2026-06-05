@@ -31,4 +31,8 @@ DatabaseManager::DatabaseManager() {
     connect(managerThread, &QThread::finished, worker, &QObject::deleteLater);
 
     connect(worker, &DatabaseWorker::logMessage, this, &DatabaseManager::logNotify);
+
+    // 注册用户信号与槽
+    connect(this, &DatabaseManager::registerRequest, worker, &DatabaseWorker::onRegisterUser);
+    connect(worker, &DatabaseWorker::registerUserResponse, this, &DatabaseManager::registerResult);
 }

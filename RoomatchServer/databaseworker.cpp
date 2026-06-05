@@ -5,6 +5,7 @@
 #include <QSqlQuery>
 #include <QStandardPaths>
 #include <QSqlError>
+#include <tools.h>
 
 DatabaseWorker::DatabaseWorker(QObject *parent)
     : QObject{parent} {}
@@ -48,4 +49,44 @@ void DatabaseWorker::onInitializeDatabase() {
         emit logMessage(error);
         qDebug() << "Database open failed:" << db.lastError().text();
     }
+}
+
+void DatabaseWorker::onRegisterUser(const USERINFO &registerInfo) {
+    QSqlDatabase db = QSqlDatabase::database("database_worker");
+
+    if (!db.isOpen()) {
+        qDebug() << "数据库异常！无法注册用户...";
+        return ;
+    }
+
+    // 先检测 教师/学生 它的 username 是否唯一
+    QSqlQuery query(db);
+    query.prepare("SELECT COUNT(*) FROM account WHERE username = :username AND type = :type");
+    query.bindValue(":username", registerInfo.username);
+    query.bindValue(":type", registerInfo.type);
+
+    if (!query.exec() || !query.next()) {
+        qDebug() << "数据库查询失败，详细" << query.lastError().text();
+        return ;
+    }
+
+    // 存在同名用户，发出信号并停止插入记录
+    if (query.value(0).toInt() > 0) {
+        STATUS status = { 1, tr("注册失败，已存在同名用户！") };
+        emit registerUserResponse(status);
+        return ;
+    }
+
+    query.prepare("INSERT INTO account (username, password, type) VALUES (:username, :password, :type)");
+    query.bindValue(":username", registerInfo.username);
+    query.bindValue(":password", registerInfo.pwd);
+    query.bindValue(":type", registerInfo.type);
+
+    if (!query.exec()) {
+        qDebug() << "注册用户失败，详细" << query.lastError().text();
+        return ;
+    }
+
+    STATUS ok = { 0, tr("成功注册用户: %1-教师。").arg(registerInfo.username) };
+    emit registerUserResponse(ok);
 }
