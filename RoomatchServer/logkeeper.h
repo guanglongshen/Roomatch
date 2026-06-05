@@ -13,10 +13,13 @@ public:
     ~LogKeeper();
 
     void addSystemLog(const QString &event, const QString &statusText, const QString &source);
+    void addEventLog(const QString &event, const QString &statusText);
 
 private:
     Ui::LogKeeper *ui;
     int MAX_LOG_COUNT;
+
+    void updateLogCount();
 };
 
 #endif // LOGKEEPER_H

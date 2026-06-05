@@ -11,6 +11,14 @@ ServerWindow::ServerWindow(QWidget *parent)
 
     // 后台数据库链接
     DatabaseManager *dbMgr = DatabaseManager::instance();
+
+    // 结合 LogKeeper
+    logKeeper = new LogKeeper(this);
+
+    // 关闭时为隐藏
+    logKeeper->setAttribute(Qt::WA_DeleteOnClose, false);
+    connect(dbMgr, &DatabaseManager::logNotify, logKeeper, &LogKeeper::addSystemLog);
+
     // 在连接信号后，启动线程
     dbMgr->startService();
 
@@ -29,13 +37,8 @@ ServerWindow::ServerWindow(QWidget *parent)
         if (logKeeper == nullptr) {
             logKeeper = new LogKeeper(this);
 
-            // // 通过 WindowFlags，使其独立弹窗，并绑定主窗口 ServerWindow，共同销毁
-            // logKeeper->setWindowFlags(Qt::Window);
-            // logKeeper->setParent(this, Qt::Window);
-
             // 关闭时为隐藏
             logKeeper->setAttribute(Qt::WA_DeleteOnClose, false);
-
             connect(DatabaseManager::instance(), &DatabaseManager::logNotify, logKeeper, &LogKeeper::addSystemLog);
         }
 
