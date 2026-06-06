@@ -12,8 +12,12 @@ public:
     explicit HomeWidget(QWidget *parent = nullptr);
     ~HomeWidget();
 
+    void setTeacher(const QString &name);
+
 private:
     Ui::HomeWidget *ui;
+
+    QString teacher;
 };
 
 #endif // HOMEWIDGET_H

@@ -13,3 +13,9 @@ HomeWidget::HomeWidget(QWidget *parent)
 HomeWidget::~HomeWidget() {
     delete ui;
 }
+
+void HomeWidget::setTeacher(const QString &name) {
+    teacher = name;
+    ui->teacherLabel->setText(teacher);
+}
+

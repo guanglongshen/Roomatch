@@ -18,11 +18,18 @@ public:
 signals:
     // 日志通知
     void logNotify(const QString &event, const QString &statusText, const QString &source);
+    // 事件通知
+    void eventNotify(const QString &event, const QString &statusText);
 
     // 注册用户请求
     void registerRequest(const USERINFO &registerInfo);
     // 注册用户结果
     void registerResult(const STATUS &status);
+
+    // 登录用户请求
+    void loginRequest(const USERINFO &loginInfo);
+    // 登录用户结果
+    void loginResult(const STATUS &status, const QString &username);
 
 private:
     DatabaseManager();

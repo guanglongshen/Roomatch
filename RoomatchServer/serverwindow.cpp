@@ -4,6 +4,7 @@
 
 #include "networkmanager.h"
 
+#include <QMessageBox>
 #include <QStatusBar>
 
 ServerWindow::ServerWindow(QWidget *parent)
@@ -14,7 +15,6 @@ ServerWindow::ServerWindow(QWidget *parent)
 
     initDatabase();
     initConnection();
-    initNet();
 }
 
 ServerWindow::~ServerWindow() {
@@ -31,6 +31,7 @@ void ServerWindow::initDatabase() {
     // 关闭时为隐藏
     logKeeper->setAttribute(Qt::WA_DeleteOnClose, false);
     connect(dbMgr, &DatabaseManager::logNotify, logKeeper, &LogKeeper::addSystemLog);
+    connect(dbMgr, &DatabaseManager::eventNotify, logKeeper, &LogKeeper::addEventLog);
 
     // 在连接信号后，启动线程
     dbMgr->startService();
@@ -47,6 +48,23 @@ void ServerWindow::initConnection() {
         smoothChangePage(ui->RegisterPage, ui->LoginPage);
     });
 
+    // 登录消息接收
+    connect(DatabaseManager::instance(), &DatabaseManager::loginResult, this, [this](const STATUS &status, const QString &username){
+        // 解除登录页面的登录按钮
+        ui->LoginPage->setLoginEnableBtn(true);
+
+        if (status.code == 0) {
+            // 登录成功，跳转至 HomePage
+            smoothChangePage(ui->LoginPage, ui->HomePage);
+            ui->HomePage->setTeacher(username);
+            this->statusBar()->showMessage(tr("%1, 欢迎登录 Room Match 平台！"), 2000);
+
+            initNet();
+        } else {
+            QMessageBox::information(this, "登录消息", status.info + "\t\t");
+        }
+    });
+
     // 设置 Action
     connect(ui->actionLogKeeper, &QAction::triggered, this, [this](){
         if (logKeeper == nullptr) {
@@ -54,7 +72,6 @@ void ServerWindow::initConnection() {
 
             // 关闭时为隐藏
             logKeeper->setAttribute(Qt::WA_DeleteOnClose, false);
-            connect(DatabaseManager::instance(), &DatabaseManager::logNotify, logKeeper, &LogKeeper::addSystemLog);
         }
 
         logKeeper->show();

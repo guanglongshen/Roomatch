@@ -32,8 +32,14 @@ DatabaseManager::DatabaseManager() {
 
     // worker 所有的 log 日志都会同步给 Manager
     connect(worker, &DatabaseWorker::logMessage, this, &DatabaseManager::logNotify);
+    // worker 所有的 event 日志都会同步给 Manager
+    connect(worker, &DatabaseWorker::eventMessage, this, &DatabaseManager::eventNotify);
 
     // 注册用户信号与槽
     connect(this, &DatabaseManager::registerRequest, worker, &DatabaseWorker::onRegisterUser);
     connect(worker, &DatabaseWorker::registerUserResponse, this, &DatabaseManager::registerResult);
+
+    // 登录用户信号与槽
+    connect(this, &DatabaseManager::loginRequest, worker, &DatabaseWorker::onLoginUser);
+    connect(worker, &DatabaseWorker::loginUserResponse, this, &DatabaseManager::loginResult);
 }

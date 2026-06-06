@@ -69,19 +69,19 @@ void LogKeeper::addSystemLog(const QString &event, const QString &statusText, co
 
 void LogKeeper::addEventLog(const QString &event, const QString &statusText) {
     QString currentTime = QDateTime::currentDateTime().toString("MM-dd-yyyy, hh:mm:ss AP");
-    QTreeWidgetItem *item = new QTreeWidgetItem(ui->systemLogTree);
+    QTreeWidgetItem *item = new QTreeWidgetItem(ui->eventLogTree);
     item->setText(0, currentTime);
     item->setText(1, event);
     item->setText(2, statusText);
 
     // 视觉效果
     item->setForeground(0, QBrush(QColor(100, 149, 237)));
-    while (ui->systemLogTree->topLevelItemCount() > MAX_LOG_COUNT) {
-        QTreeWidgetItem *deleteItem = ui->systemLogTree->takeTopLevelItem(0);
+    while (ui->eventLogTree->topLevelItemCount() > MAX_LOG_COUNT) {
+        QTreeWidgetItem *deleteItem = ui->eventLogTree->takeTopLevelItem(0);
         delete deleteItem;
     }
 
-    ui->systemLogTree->scrollToItem(item);
+    ui->eventLogTree->scrollToItem(item);
     updateLogCount();
 }
 

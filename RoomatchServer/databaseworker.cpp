@@ -89,3 +89,55 @@ void DatabaseWorker::onRegisterUser(const USERINFO &registerInfo) {
     emit logMessage(tr("注册教师用户"), "ok", "Database");
     emit registerUserResponse(ok);
 }
+
+void DatabaseWorker::onLoginUser(const USERINFO &loginInfo) {
+    QSqlDatabase db = QSqlDatabase::database("database_worker");
+    STATUS ERROR{ 2001, tr("数据库异常") };
+    STATUS NOEXIST{ 2002, tr("用户不存在") };
+    STATUS WRONG {2003, tr("密码错误") };
+    STATUS OK { 0, tr("登录成功") };
+    if (!db.isOpen()) {
+        emit logMessage(tr("数据库"), db.lastError().text(), "Database");
+        emit loginUserResponse(ERROR, loginInfo.username);
+        return ;
+    }
+
+    QSqlQuery query(db);
+    // 分类处理
+    // 处理教师
+    if (loginInfo.type == 0) {
+        query.prepare("SELECT password FROM account WHERE username = :username AND type = :type");
+        query.bindValue(":username", loginInfo.username);
+        query.bindValue(":type", loginInfo.type);
+
+        if (!query.exec()) {
+            emit logMessage(tr("数据库"), db.lastError().text(), "Database");
+            emit loginUserResponse(ERROR, loginInfo.username);
+            return ;
+        }
+
+        if (query.next()) {
+            QString dbPwd = query.value("password").toString();
+            if (dbPwd == loginInfo.pwd) {   // 密码正确
+                emit loginUserResponse(OK, loginInfo.username);
+                emit eventMessage(tr("用户登录"), tr("ok，%1 已登录").arg(loginInfo.username));
+
+                QSqlQuery updateQuery(db);
+                updateQuery.prepare("UPDATE account SET last_login = DATETIME('now', 'localtime') WHERE username = :username AND type = :type");
+                updateQuery.bindValue(":username", loginInfo.username);
+                updateQuery.bindValue(":type", loginInfo.type);
+                updateQuery.exec();
+
+                emit eventMessage(tr("%1 最后登录时间").arg(loginInfo.username), "changed!");
+            } else {                        // 密码错误
+                emit loginUserResponse(WRONG, loginInfo.username);
+                emit eventMessage(tr("用户登录"), tr("error，%1 用户密码错误").arg(loginInfo.username));
+            }
+        } else {                // 用户不存在
+            emit loginUserResponse(NOEXIST, loginInfo.username);
+            emit eventMessage(tr("用户登录"), tr("wrong，%1 用户不存在").arg(loginInfo.username));
+            return ;
+        }
+    } else {// 处理学生登录
+    }
+}

@@ -17,6 +17,8 @@ public:
     // 获取明文密码
     QString getPassword() const;
 
+    void setLoginEnableBtn(bool t);
+
 signals:
     void toRegisterPage();
 
