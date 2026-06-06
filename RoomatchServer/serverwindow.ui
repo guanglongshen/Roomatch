@@ -18,10 +18,11 @@
     <item>
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="LoginWidget" name="LoginPage"/>
       <widget class="RegisterWidget" name="RegisterPage"/>
+      <widget class="QWidget" name="HomePage"/>
      </widget>
     </item>
    </layout>

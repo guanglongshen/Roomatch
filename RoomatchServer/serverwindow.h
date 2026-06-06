@@ -19,5 +19,9 @@ public:
 private:
     Ui::ServerWindow *ui;
     LogKeeper *logKeeper = nullptr;
+
+    void initDatabase();
+    void initConnection();
+    void initNet();
 };
 #endif // SERVERWINDOW_H

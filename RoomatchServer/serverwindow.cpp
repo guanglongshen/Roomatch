@@ -10,7 +10,19 @@ ServerWindow::ServerWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::ServerWindow) {
     ui->setupUi(this);
+    // 登录界面为首
+    ui->stackedWidget->setCurrentIndex(0);
 
+    initDatabase();
+    initConnection();
+    initNet();
+}
+
+ServerWindow::~ServerWindow() {
+    delete ui;
+}
+
+void ServerWindow::initDatabase() {
     // 后台数据库链接
     DatabaseManager *dbMgr = DatabaseManager::instance();
 
@@ -23,7 +35,9 @@ ServerWindow::ServerWindow(QWidget *parent)
 
     // 在连接信号后，启动线程
     dbMgr->startService();
+}
 
+void ServerWindow::initConnection() {
     // 与注册页面连接
     connect(ui->LoginPage, &LoginWidget::toRegisterPage, this, [this](){
         ui->stackedWidget->setCurrentIndex(1);  // 切换到 1-注册页
@@ -48,14 +62,11 @@ ServerWindow::ServerWindow(QWidget *parent)
         logKeeper->raise();
         logKeeper->activateWindow();
     });
+}
 
-
+void ServerWindow::initNet() {
     // 网络测试
     NetworkManager *netMgr = NetworkManager::instance();
     connect(netMgr, &NetworkManager::logNotify, logKeeper, &LogKeeper::addSystemLog);
     netMgr->startService();
-}
-
-ServerWindow::~ServerWindow() {
-    delete ui;
 }
