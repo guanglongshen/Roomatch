@@ -34,4 +34,6 @@ struct PACKETHEADER {
     quint32 length;                 // 包体数据的实际长度（字节数）
 };
 
+const quint32 MAGICNUM = 0x4D544348;
+
 #endif // PROTOCOLS_H

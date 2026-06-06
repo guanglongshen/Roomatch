@@ -116,7 +116,7 @@
 &lt;/p&gt;</string>
        </property>
        <property name="text">
-        <string>[返回登录]</string>
+        <string>返回登录</string>
        </property>
       </widget>
      </item>
@@ -142,7 +142,7 @@
 &lt;/p&gt;</string>
        </property>
        <property name="text">
-        <string>[清空输入]</string>
+        <string>清空输入</string>
        </property>
       </widget>
      </item>
@@ -155,7 +155,7 @@
 &lt;/p&gt;</string>
        </property>
        <property name="text">
-        <string>[立即注册]</string>
+        <string>立即注册</string>
        </property>
       </widget>
      </item>

@@ -50,10 +50,10 @@ ServerWindow::ServerWindow(QWidget *parent)
     });
 
 
-    // // 网络测试
-    // NetworkManager *netMgr = NetworkManager::instance();
-    // connect(netMgr, &NetworkManager::logNotify, logKeeper, &LogKeeper::addSystemLog);
-    // netMgr->startService();
+    // 网络测试
+    NetworkManager *netMgr = NetworkManager::instance();
+    connect(netMgr, &NetworkManager::logNotify, logKeeper, &LogKeeper::addSystemLog);
+    netMgr->startService();
 }
 
 ServerWindow::~ServerWindow() {
