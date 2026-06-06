@@ -10,9 +10,7 @@ ServerWindow::ServerWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::ServerWindow) {
     ui->setupUi(this);
-    // 测试专用
-    // 默认 登录界面为首 0
-    ui->stackedWidget->setCurrentIndex(2);
+    initStackedWidget();
 
     initDatabase();
     initConnection();
@@ -41,12 +39,12 @@ void ServerWindow::initDatabase() {
 void ServerWindow::initConnection() {
     // 与注册页面连接
     connect(ui->LoginPage, &LoginWidget::toRegisterPage, this, [this](){
-        ui->stackedWidget->setCurrentIndex(1);  // 切换到 1-注册页
+        smoothChangePage(ui->LoginPage, ui->RegisterPage);
     });
 
     // 注册页面返回到登录页面
     connect(ui->RegisterPage, &RegisterWidget::toLoginPage, this, [this](){
-        ui->stackedWidget->setCurrentIndex(0);  // 切换到 0-登录页
+        smoothChangePage(ui->RegisterPage, ui->LoginPage);
     });
 
     // 设置 Action
@@ -70,4 +68,23 @@ void ServerWindow::initNet() {
     NetworkManager *netMgr = NetworkManager::instance();
     connect(netMgr, &NetworkManager::logNotify, logKeeper, &LogKeeper::addSystemLog);
     netMgr->startService();
+}
+
+void ServerWindow::initStackedWidget() {
+    // 测试专用
+    // 默认 登录界面为首 0
+    for (int i = 0; i < ui->stackedWidget->count(); i++) {
+        QWidget *page = ui->stackedWidget->widget(i);
+        page->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    }
+    ui->LoginPage->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    ui->stackedWidget->setCurrentWidget(ui->LoginPage);
+    this->adjustSize();
+}
+
+void ServerWindow::smoothChangePage(QWidget *OLD, QWidget *NEW) {
+    OLD->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    NEW->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    ui->stackedWidget->setCurrentWidget(NEW);
+    this->adjustSize();
 }

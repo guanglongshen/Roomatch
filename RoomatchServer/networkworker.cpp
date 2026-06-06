@@ -13,10 +13,11 @@ void NetworkWorker::onStartNetworkService() {
     // 初始化 UDP 套接字
     udpSocket = new QUdpSocket(this);
 
-    // 初始化定时器 2s 刷新广播
+    // 初始化定时器 10s 刷新广播
     broadcastTimer = new QTimer(this);
     connect(broadcastTimer, &QTimer::timeout, this, &NetworkWorker::onSendBroadcast);
-    broadcastTimer->start(2000);
+    onSendBroadcast();
+    broadcastTimer->start(10000);
 
     // 测试
     emit logMessage(tr("UDP 广播服务"), "ok", "Net Server");

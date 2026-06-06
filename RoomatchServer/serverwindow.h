@@ -23,5 +23,7 @@ private:
     void initDatabase();
     void initConnection();
     void initNet();
+    void initStackedWidget();
+    void smoothChangePage(QWidget *OLD, QWidget *NEW);
 };
 #endif // SERVERWINDOW_H
