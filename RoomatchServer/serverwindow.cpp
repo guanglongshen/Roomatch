@@ -10,8 +10,9 @@ ServerWindow::ServerWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::ServerWindow) {
     ui->setupUi(this);
-    // 登录界面为首
-    ui->stackedWidget->setCurrentIndex(0);
+    // 测试专用
+    // 默认 登录界面为首 0
+    ui->stackedWidget->setCurrentIndex(2);
 
     initDatabase();
     initConnection();

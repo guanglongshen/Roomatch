@@ -22,7 +22,7 @@
       </property>
       <widget class="LoginWidget" name="LoginPage"/>
       <widget class="RegisterWidget" name="RegisterPage"/>
-      <widget class="QWidget" name="HomePage"/>
+      <widget class="HomeWidget" name="HomePage"/>
      </widget>
     </item>
    </layout>
@@ -62,6 +62,12 @@
    <class>RegisterWidget</class>
    <extends>QWidget</extends>
    <header>registerwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>HomeWidget</class>
+   <extends>QWidget</extends>
+   <header>homewidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

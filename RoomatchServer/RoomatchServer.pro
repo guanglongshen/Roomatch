@@ -9,6 +9,7 @@ CONFIG += c++17
 SOURCES += \
     databasemanager.cpp \
     databaseworker.cpp \
+    homewidget.cpp \
     loginwidget.cpp \
     logkeeper.cpp \
     main.cpp \
@@ -20,6 +21,7 @@ SOURCES += \
 HEADERS += \
     databasemanager.h \
     databaseworker.h \
+    homewidget.h \
     loginwidget.h \
     logkeeper.h \
     networkmanager.h \
@@ -28,6 +30,7 @@ HEADERS += \
     serverwindow.h
 
 FORMS += \
+    homewidget.ui \
     loginwidget.ui \
     logkeeper.ui \
     registerwidget.ui \
