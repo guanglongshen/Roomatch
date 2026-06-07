@@ -7,14 +7,17 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    loginwidget.cpp \
     main.cpp \
     clientwindow.cpp
 
 HEADERS += \
-    clientwindow.h
+    clientwindow.h \
+    loginwidget.h
 
 FORMS += \
-    clientwindow.ui
+    clientwindow.ui \
+    loginwidget.ui
 
 TRANSLATIONS += \
     RoomatchClient_en_US.ts
