@@ -11,6 +11,8 @@ public:
     static NetworkManager* instance();
     ~NetworkManager();
 
+    void setTeacherName(const QString &name);
+
     // 启动网络 Manager 服务，在构造函数结束之后再启动
     void startService();
 

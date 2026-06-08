@@ -1,5 +1,6 @@
 #ifndef PROTOCOLS_H
 #define PROTOCOLS_H
+#pragma pack(push, 1) // 开启 1 字节对齐，绝不允许编译器偷偷塞垃圾字节！
 
 #include <QtTypes>
 
@@ -35,5 +36,14 @@ struct PACKETHEADER {
 };
 
 const quint32 MAGICNUM = 0x4D544348;
+const quint16 studentListenerPort = 55521;  // 学生监听 UDP 端口
+const quint16 teacherListenerPort = 55520;  // 老师监听 UDP 端口
 
+// 网络传输中的用户
+struct USERINFO_PACKET {
+    char username[32]; // 固定 32 字节大小的格子
+    char password[32]; // 固定 32 字节大小的格子
+    quint16 type;      // 身份类型
+};
+#pragma pack(pop)
 #endif // PROTOCOLS_H

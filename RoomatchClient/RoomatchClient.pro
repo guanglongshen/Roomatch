@@ -1,4 +1,5 @@
-QT += widgets
+QT += widgets \
+    network
 
 CONFIG += c++17
 
@@ -9,11 +10,15 @@ CONFIG += c++17
 SOURCES += \
     loginwidget.cpp \
     main.cpp \
-    clientwindow.cpp
+    clientwindow.cpp \
+    networkmanager.cpp \
+    networkworker.cpp
 
 HEADERS += \
     clientwindow.h \
-    loginwidget.h
+    loginwidget.h \
+    networkmanager.h \
+    networkworker.h
 
 FORMS += \
     clientwindow.ui \
@@ -28,3 +33,13 @@ CONFIG += embed_translations
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+# 链接 RoomatchCommon 静态库
+# 1. 告诉编译器去哪里找公共库的头文件 (.h)
+INCLUDEPATH += $$PWD/../RoomatchCommon
+DEPENDPATH  += $$PWD/../RoomatchCommon
+
+# 2. 告诉编译器去哪里找静态库文件，并将其链接进来
+# -L 参数指定库文件所在的文件夹路径（对应 Common 里的 DESTDIR）
+# -l 参数指定库的名称（注意：去掉前缀 "lib" 和后缀 ".a"/".lib"）
+LIBS += -L$$PWD/../RoomatchCommon/lib -lRoomatchCommon

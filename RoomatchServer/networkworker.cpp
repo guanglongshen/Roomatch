@@ -111,6 +111,7 @@ void NetworkWorker::onClientDisconnected() {
 
 void NetworkWorker::onSendBroadcast() {
     SERVERBROADCASTINFO info;
+    memset(&info, 0, sizeof(info));
 
     // 填充魔数暗号
     memset(info.magic, 0, sizeof(info.magic));
@@ -123,12 +124,13 @@ void NetworkWorker::onSendBroadcast() {
     memset(info.serverName, 0, sizeof(info.serverName));
     // 将 QString 安全转为 char* 并拷贝
     QByteArray nameBytes = serverName.toUtf8();
-    strncpy_s(info.serverName, nameBytes, sizeof(info.serverName) - 1);
+    strncpy_s(info.serverName, nameBytes.constData(), sizeof(info.serverName) - 1);
 
     // 将结构体强转为 char*
     // 随后广播全网 IP(255.255.255.255)，学生端在听端口为 55521
     QByteArray datagram(reinterpret_cast<const char*>(&info), sizeof(info));
-    udpSocket->writeDatagram(datagram, QHostAddress::Broadcast, 55521);
+    udpSocket->writeDatagram(datagram, QHostAddress::Broadcast, studentListenerPort);
+    // udpSocket->writeDatagram(datagram, QHostAddress::LocalHost, studentListenerPort);
 
     // 测试
     emit logMessage("UDP 广播心跳包", tr("端口：%1，教师：%2").arg(tcpPort).arg(serverName), "Net Server");

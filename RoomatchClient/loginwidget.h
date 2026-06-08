@@ -12,8 +12,17 @@ public:
     explicit LoginWidget(QWidget *parent = nullptr);
     ~LoginWidget();
 
+public slots:
+    void onTeacherDiscovered(const QString &name, const QString &ip, quint16 port);
+
+private slots:
+
+
+
 private:
     Ui::LoginWidget *ui;
+
+
 };
 
 #endif // LOGINWIDGET_H

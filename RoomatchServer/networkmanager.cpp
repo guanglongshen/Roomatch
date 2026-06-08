@@ -23,6 +23,10 @@ NetworkManager::~NetworkManager() {
     }
 }
 
+void NetworkManager::setTeacherName(const QString &name) {
+    worker->setServerName(name);
+}
+
 // 启动服务
 void NetworkManager::startService() {
     if (!netThread->isRunning()) {

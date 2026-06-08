@@ -59,7 +59,11 @@ void ServerWindow::initConnection() {
             ui->HomePage->setTeacher(username);
             this->statusBar()->showMessage(tr("%1, 欢迎登录 Room Match 平台！"), 2000);
 
-            initNet();
+            NetworkManager *netMgr = NetworkManager::instance();
+            connect(netMgr, &NetworkManager::logNotify, logKeeper, &LogKeeper::addSystemLog);
+            netMgr->setTeacherName(username);
+            netMgr->startService();
+
         } else {
             QMessageBox::information(this, "登录消息", status.info + "\t\t");
         }

@@ -16,5 +16,9 @@ public:
 
 private:
     Ui::ClientWindow *ui;
+    void initNet();
+
+    QString teacherName;
+    QString studentName;
 };
 #endif // CLIENTWINDOW_H
