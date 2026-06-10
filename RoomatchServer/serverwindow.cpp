@@ -19,6 +19,7 @@ ServerWindow::ServerWindow(QWidget *parent)
 }
 
 ServerWindow::~ServerWindow() {
+    NetworkManager::instance()->stopService();
     delete ui;
 }
 
