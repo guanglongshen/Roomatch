@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>StudentRegisterWidget</class>
+ <widget class="QWidget" name="StudentRegisterWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QLabel" name="StudentLabel">
+     <property name="text">
+      <string>&lt;p align=&quot;center&quot; style=&quot;line-height: 125%;&quot;&gt;
+    &lt;span style=&quot;font-size: 32px; font-weight: bold; color: #00adb5; font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;&quot;&gt;
+        学生注册
+    &lt;/span&gt;
+    &lt;br/&gt;
+    &lt;span style=&quot;font-size: 16px; font-weight: bold; font-family: 'Segoe UI', sans-serif; letter-spacing: 1px;&quot;&gt;
+        &lt;span style=&quot;color: #ff9f43;&quot;&gt;CLIENT&lt;/span&gt;
+        &lt;span style=&quot;color: #666666;&quot;&gt; / &lt;/span&gt;
+        &lt;span style=&quot;color: #a55eea;&quot;&gt;REGISTRATION FORM&lt;/span&gt;
+    &lt;/span&gt;
+&lt;/p&gt;</string>
+     </property>
+     <property name="textFormat">
+      <enum>Qt::TextFormat::RichText</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QFormLayout" name="formLayout">
+     <item row="1" column="0">
+      <widget class="QLabel" name="usernameLabel">
+       <property name="text">
+        <string>昵      称：</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="usernameEdit">
+       <property name="toolTip">
+        <string>&lt;p style='line-height: 125%; font-family: &quot;Segoe UI&quot;, &quot;Microsoft YaHei&quot;; padding: 3px;'&gt;
+    &lt;b style='color: #00adb5; font-size: 13px;'&gt;👤 账户昵称规范&lt;/b&gt;&lt;br/&gt;
+    &lt;span style='color: #555555;'&gt;请填写您的&lt;/span&gt;
+    &lt;b style='color: #ff9f43;'&gt;真实姓名&lt;/b&gt;
+    &lt;span style='color: #555555;'&gt;以供竞赛系统实名认证。&lt;/span&gt;&lt;br/&gt;
+    &lt;span style='color: #7f8c8d; font-size: 11px;'&gt;⚠️ 长度限制：1 ~ 16 位字符（支持中英文/数字）&lt;/span&gt;
+&lt;/p&gt;</string>
+       </property>
+       <property name="maxLength">
+        <number>16</number>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="pwdLabel">
+       <property name="text">
+        <string>密      码：</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="pwdEdit">
+       <property name="toolTip">
+        <string>&lt;p style='line-height: 140%; font-family: &quot;Segoe UI&quot;, &quot;Microsoft YaHei&quot;; padding: 3px;'&gt;
+    &lt;b style='color: #a55eea; font-size: 13px;'&gt;🔒 密码安全要求&lt;/b&gt;&lt;br/&gt;
+    &lt;span style='color: #555555;'&gt;请输入 &lt;/span&gt;&lt;b style='color: #a55eea;'&gt;6 ~ 16 位&lt;/b&gt;&lt;span style='color: #555555;'&gt; 账户登录密码。&lt;/span&gt;&lt;br/&gt;
+    &lt;span style='color: #7f8c8d; font-size: 11px;'&gt;💡 提示：支持字母、数字及常见特殊符号。&lt;/span&gt;&lt;br/&gt;
+    &lt;span style='color: #c0392b; font-size: 11px;'&gt;🚫 禁用字符：严禁包含空格与反斜杠 ( \ )。&lt;/span&gt;
+&lt;/p&gt;</string>
+       </property>
+       <property name="maxLength">
+        <number>16</number>
+       </property>
+       <property name="echoMode">
+        <enum>QLineEdit::EchoMode::Password</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="pwdConfirmLabel">
+       <property name="text">
+        <string>确认密码：</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLineEdit" name="pwdConfirmEdit">
+       <property name="toolTip">
+        <string>&lt;p style='line-height: 140%; font-family: &quot;Segoe UI&quot;, &quot;Microsoft YaHei&quot;; padding: 3px;'&gt;
+    &lt;b style='color: #00adb5; font-size: 13px;'&gt;🔄 密码一致性校验&lt;/b&gt;&lt;br/&gt;
+    &lt;span style='color: #555555;'&gt;请再次输入与上方&lt;/span&gt;
+    &lt;b style='color: #ff9f43;'&gt;完全一致&lt;/b&gt;
+    &lt;span style='color: #555555;'&gt;的密码。&lt;/span&gt;&lt;br/&gt;
+    &lt;span style='color: #7f8c8d; font-size: 11px;'&gt;💡 提示：两次输入不一致将无法提交注册。&lt;/span&gt;
+&lt;/p&gt;</string>
+       </property>
+       <property name="maxLength">
+        <number>16</number>
+       </property>
+       <property name="echoMode">
+        <enum>QLineEdit::EchoMode::Password</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QLabel" name="tipLabel">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::TextFormat::RichText</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="teacherLabel">
+       <property name="text">
+        <string>教      师：</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QComboBox" name="onlineTeacherComboBox">
+       <property name="placeholderText">
+        <string>暂无教师在线</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QPushButton" name="backBtn">
+       <property name="toolTip">
+        <string>&lt;p style='margin:0; font-family:&quot;Segoe UI&quot;,&quot;Microsoft YaHei&quot;;'&gt;
+    &lt;b style='color: #ff9f43;'&gt;↩️ 返回登录界面&lt;/b&gt;&lt;br/&gt;
+    &lt;span style='color: #555555; font-size: 11px;'&gt;注意：未提交的注册信息将会丢失。&lt;/span&gt;
+&lt;/p&gt;</string>
+       </property>
+       <property name="text">
+        <string>返回登录</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Orientation::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="clearBtn">
+       <property name="toolTip">
+        <string>&lt;p style='margin:0; font-family:&quot;Segoe UI&quot;,&quot;Microsoft YaHei&quot;;'&gt;
+    &lt;b style='color: #e74c3c;'&gt;🗑️ 一键清空表单&lt;/b&gt;&lt;br/&gt;
+    &lt;span style='color: #555555; font-size: 11px;'&gt;将擦除当前输入的昵称、密码等所有内容。&lt;/span&gt;
+&lt;/p&gt;</string>
+       </property>
+       <property name="text">
+        <string>清空输入</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="registerBtn">
+       <property name="toolTip">
+        <string>&lt;p style='margin:0; font-family:&quot;Segoe UI&quot;,&quot;Microsoft YaHei&quot;;'&gt;
+    &lt;b style='color: #00adb5;'&gt;🚀 提交注册申请&lt;/b&gt;&lt;br/&gt;
+    &lt;span style='color: #555555; font-size: 11px;'&gt;向 Roomatch 数据库注册教师账户。&lt;/span&gt;
+&lt;/p&gt;</string>
+       </property>
+       <property name="text">
+        <string>立即注册</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>onlineTeacherComboBox</tabstop>
+  <tabstop>usernameEdit</tabstop>
+  <tabstop>pwdEdit</tabstop>
+  <tabstop>pwdConfirmEdit</tabstop>
+  <tabstop>backBtn</tabstop>
+  <tabstop>clearBtn</tabstop>
+  <tabstop>registerBtn</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

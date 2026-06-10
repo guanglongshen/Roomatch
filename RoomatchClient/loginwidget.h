@@ -12,6 +12,10 @@ public:
     explicit LoginWidget(QWidget *parent = nullptr);
     ~LoginWidget();
 
+signals:
+    // 跳转注册页面
+    void toRegisterPage();
+
 public slots:
     void onTeacherDiscovered(const QString &name, const QString &ip, quint16 port);
     void onTeacherDismissed(const QString &name, const QString &ip, quint16 port);

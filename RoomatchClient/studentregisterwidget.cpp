@@ -1,22 +1,29 @@
-#include "loginwidget.h"
-#include "ui_loginwidget.h"
+#include "studentregisterwidget.h"
+#include "ui_studentregisterwidget.h"
 
-LoginWidget::LoginWidget(QWidget *parent)
+StudentRegisterWidget::StudentRegisterWidget(QWidget *parent)
     : QWidget(parent)
-    , ui(new Ui::LoginWidget) {
+    , ui(new Ui::StudentRegisterWidget) {
     ui->setupUi(this);
 
-    // 点击注册按钮，跳转到注册页面
-    connect(ui->registerBtn, &QPushButton::clicked, this, [this](){
-        emit toRegisterPage();
+    // 点击返回登录按钮
+    connect(ui->backBtn, &QPushButton::clicked, this, [this](){
+        emit toLoginPage();
+    });
+
+    // 清空输入按钮
+    connect(ui->clearBtn, &QPushButton::clicked, this, [this](){
+        ui->usernameEdit->clear();
+        ui->pwdEdit->clear();
+        ui->pwdConfirmEdit->clear();
     });
 }
 
-LoginWidget::~LoginWidget() {
+StudentRegisterWidget::~StudentRegisterWidget() {
     delete ui;
 }
 
-void LoginWidget::onTeacherDiscovered(const QString &name, const QString &ip, quint16 port) {
+void StudentRegisterWidget::onTeacherDiscovered(const QString &name, const QString &ip, quint16 port) {
     QString displayText = QString("%1(%2)").arg(name, ip);
     QString uniqueKey = QString("%1:%2").arg(ip).arg(port);
 
@@ -31,7 +38,7 @@ void LoginWidget::onTeacherDiscovered(const QString &name, const QString &ip, qu
     }
 }
 
-void LoginWidget::onTeacherDismissed(const QString &name, const QString &ip, quint16 port) {
+void StudentRegisterWidget::onTeacherDismissed(const QString &name, const QString &ip, quint16 port) {
     QString displayText = QString("%1(%2)").arg(name, ip);
     QString uniqueKey = QString("%1:%2").arg(ip).arg(port);
 

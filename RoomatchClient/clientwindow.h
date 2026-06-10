@@ -17,6 +17,10 @@ public:
 private:
     Ui::ClientWindow *ui;
     void initNet();
+    void initConnect();
+
+    void initStackedWidget();
+    void smoothChangePage(QWidget *OLD, QWidget *NEW);
 
     QString teacherName;
     QString studentName;

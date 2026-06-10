@@ -180,6 +180,13 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>onlineTeacherComboBox</tabstop>
+  <tabstop>usernameEdit</tabstop>
+  <tabstop>pwdEdit</tabstop>
+  <tabstop>loginBtn</tabstop>
+  <tabstop>registerBtn</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

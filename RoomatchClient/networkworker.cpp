@@ -11,7 +11,6 @@ void NetworkWorker::onInitializeNetwork() {
     // 绑定局域网大喇叭端口
     bool bindOk = udpListener->bind(studentListenerPort, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
     if (bindOk) {
-        qDebug() << "bind ok.";
         connect(udpListener, &QUdpSocket::readyRead, this, &NetworkWorker::onReadPendingDatagrams);
     } else {
         qDebug() << "bind failed.";

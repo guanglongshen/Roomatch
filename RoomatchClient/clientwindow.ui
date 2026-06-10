@@ -18,7 +18,7 @@
     <item>
      <widget class="QStackedWidget" name="stackedWidget">
       <widget class="LoginWidget" name="loginPage"/>
-      <widget class="QWidget" name="page_2"/>
+      <widget class="StudentRegisterWidget" name="registerPage"/>
      </widget>
     </item>
    </layout>
@@ -40,6 +40,12 @@
    <class>LoginWidget</class>
    <extends>QWidget</extends>
    <header>loginwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>StudentRegisterWidget</class>
+   <extends>QWidget</extends>
+   <header>studentregisterwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

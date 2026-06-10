@@ -12,17 +12,20 @@ SOURCES += \
     main.cpp \
     clientwindow.cpp \
     networkmanager.cpp \
-    networkworker.cpp
+    networkworker.cpp \
+    studentregisterwidget.cpp
 
 HEADERS += \
     clientwindow.h \
     loginwidget.h \
     networkmanager.h \
-    networkworker.h
+    networkworker.h \
+    studentregisterwidget.h
 
 FORMS += \
     clientwindow.ui \
-    loginwidget.ui
+    loginwidget.ui \
+    studentregisterwidget.ui
 
 TRANSLATIONS += \
     RoomatchClient_en_US.ts
