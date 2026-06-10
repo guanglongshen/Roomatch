@@ -14,6 +14,9 @@ public:
 
     void setTeacher(const QString &name);
 
+signals:
+    void quitLogin();
+
 private:
     Ui::HomeWidget *ui;
 

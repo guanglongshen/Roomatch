@@ -26,6 +26,8 @@ private slots:
 signals:
     // 发现教师
     void teacherDiscovered(const QString &name, const QString &ip, quint16 port);
+    // 教师离线
+    void teacherDismissed(const QString &name, const QString &ip, quint16 port);
 
     void loginResponse(const STATUS &status);
     void registerResponse(const STATUS &status);

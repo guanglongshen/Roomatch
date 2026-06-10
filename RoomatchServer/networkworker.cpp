@@ -11,23 +11,30 @@ NetworkWorker::~NetworkWorker() {
 
 void NetworkWorker::onStartNetworkService() {
     // 初始化 UDP 套接字
-    udpSocket = new QUdpSocket(this);
-
-    // 初始化定时器 10s 刷新广播
-    broadcastTimer = new QTimer(this);
-    connect(broadcastTimer, &QTimer::timeout, this, &NetworkWorker::onSendBroadcast);
-    onSendBroadcast();
-    broadcastTimer->start(10000);
-
+    if (udpSocket == nullptr) udpSocket = new QUdpSocket(this);
     // 测试
     emit logMessage(tr("UDP 广播服务"), "ok", "Net Server");
 
+    // 初始化定时器 10s 刷新广播
+    if (broadcastTimer == nullptr) {
+        broadcastTimer = new QTimer(this);
+        connect(broadcastTimer, &QTimer::timeout, this, &NetworkWorker::onSendBroadcast);
+    }
+    onSendBroadcast();
+    broadcastTimer->start(10000);
+
     // 初始化 TCP 监听服务
-    tcpServer = new QTcpServer(this);
+    if (tcpServer == nullptr) {
+        tcpServer = new QTcpServer(this);
+        // 监听信号只触发一次
+        connect(tcpServer, &QTcpServer::newConnection, this, &NetworkWorker::onClientConnected);
+    }
+    if (tcpServer->isListening()) {
+        tcpServer->close();
+    }
 
     // 在端口 tcpPort: 55520，允许任何局域网 IP 连入
     if (tcpServer->listen(QHostAddress::Any, tcpPort)) {
-        connect(tcpServer, &QTcpServer::newConnection, this, &NetworkWorker::onClientConnected);
         emit logMessage(tr("TCP 核心服务"), tr("ok，Tcp 端口: %1").arg(tcpPort), "Net Server");
     } else {
         emit logMessage(tr("TCP 核心服务"), tr("error，端口 %1 可能被占用").arg(tcpPort), "Net Server");
@@ -120,6 +127,9 @@ void NetworkWorker::onSendBroadcast() {
     // 填充端口
     info.tcpPort = tcpPort;
 
+    // 在线状态
+    info.state = BROADCAST_ONLINE;
+
     // 填充教师名
     memset(info.serverName, 0, sizeof(info.serverName));
     // 将 QString 安全转为 char* 并拷贝
@@ -133,7 +143,46 @@ void NetworkWorker::onSendBroadcast() {
     // udpSocket->writeDatagram(datagram, QHostAddress::LocalHost, studentListenerPort);
 
     // 测试
-    emit logMessage("UDP 广播心跳包", tr("端口：%1，教师：%2").arg(tcpPort).arg(serverName), "Net Server");
+    emit logMessage("UDP 广播心跳包", tr("教师：%1").arg(serverName), "Net Server");
+}
+
+void NetworkWorker::onSendLogoutBroadcast() {
+    // 停止计时器，不再发送广播
+    if (broadcastTimer) {
+        broadcastTimer->stop();
+    }
+
+    SERVERBROADCASTINFO info;
+    memset(&info, 0, sizeof(info));
+    strncpy_s(info.magic, "ROOMATCH", 8);
+    info.tcpPort = tcpPort;
+    QByteArray nameBytes = serverName.toUtf8();
+    strncpy_s(info.serverName, nameBytes.constData(), sizeof(info.serverName) - 1);
+    info.state = BROADCAST_OFFLINE;
+
+    QByteArray datagram(reinterpret_cast<const char*>(&info), sizeof(info));
+    for (int i = 0; i < 3; i++) {
+        udpSocket->writeDatagram(datagram, QHostAddress::Broadcast, studentListenerPort);
+    }
+
+    for (QTcpSocket *socket : std::as_const(clientSockets)) {
+        if (socket && socket->isOpen()) {
+            socket->disconnectFromHost();
+        }
+    }
+
+    if (tcpServer && tcpServer->isListening()) {
+        tcpServer->close();
+    }
+
+    // 关闭计时器
+    if (broadcastTimer && broadcastTimer->isActive()) {
+        broadcastTimer->stop();
+    }
+
+    emit eventMessage(tr("退出登录"), tr("%1 已登出").arg(serverName));
+    // 测试
+    emit logMessage("UDP 广播心跳包", tr("端口：%1，教师：%2，已停止").arg(tcpPort).arg(serverName), "Net Server");
 }
 
 // 公共接口

@@ -15,6 +15,7 @@ ServerWindow::ServerWindow(QWidget *parent)
 
     initDatabase();
     initConnection();
+    initNet();
 }
 
 ServerWindow::~ServerWindow() {
@@ -57,16 +58,23 @@ void ServerWindow::initConnection() {
             // 登录成功，跳转至 HomePage
             smoothChangePage(ui->LoginPage, ui->HomePage);
             ui->HomePage->setTeacher(username);
-            this->statusBar()->showMessage(tr("%1, 欢迎登录 Room Match 平台！"), 2000);
+            this->statusBar()->showMessage(tr("%1, 欢迎登录 Room Match 平台！").arg(username), 2000);
 
-            NetworkManager *netMgr = NetworkManager::instance();
-            connect(netMgr, &NetworkManager::logNotify, logKeeper, &LogKeeper::addSystemLog);
-            netMgr->setTeacherName(username);
-            netMgr->startService();
+            NetworkManager::instance()->setTeacherName(username);
+            NetworkManager::instance()->startService();
 
         } else {
             QMessageBox::information(this, "登录消息", status.info + "\t\t");
         }
+    });
+
+    // 主页面退出登录
+    connect(ui->HomePage, &HomeWidget::quitLogin, this, [this](){
+        smoothChangePage(ui->HomePage, ui->LoginPage);
+        this->statusBar()->showMessage(tr("已成功退出登录！"), 2000);
+
+        // 网络停止服务
+        NetworkManager::instance()->stopService();
     });
 
     // 设置 Action
@@ -88,7 +96,7 @@ void ServerWindow::initNet() {
     // 网络测试
     NetworkManager *netMgr = NetworkManager::instance();
     connect(netMgr, &NetworkManager::logNotify, logKeeper, &LogKeeper::addSystemLog);
-    netMgr->startService();
+    connect(netMgr, &NetworkManager::eventNotify, logKeeper, &LogKeeper::addEventLog);
 }
 
 void ServerWindow::initStackedWidget() {

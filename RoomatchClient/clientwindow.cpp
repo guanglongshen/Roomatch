@@ -18,6 +18,7 @@ void ClientWindow::initNet() {
     qDebug() << "init...";
     NetworkManager *netMgr = NetworkManager::instance();
     connect(netMgr, &NetworkManager::teacherDiscoveredUI, ui->loginPage, &LoginWidget::onTeacherDiscovered);
+    connect(netMgr, &NetworkManager::teacherDismissedUI, ui->loginPage, &LoginWidget::onTeacherDismissed);
     netMgr->startService();
 }
 

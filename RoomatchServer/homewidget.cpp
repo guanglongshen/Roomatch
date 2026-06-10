@@ -8,6 +8,9 @@ HomeWidget::HomeWidget(QWidget *parent)
     // 视觉效果
     ui->contestTree->header()->setSectionResizeMode(QHeaderView::ResizeToContents); // 自动适配内容大小
     ui->onlineTree->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+
+    // 退出登录按键
+    connect(ui->quitBtn, &QPushButton::clicked, this, &HomeWidget::quitLogin);
 }
 
 HomeWidget::~HomeWidget() {

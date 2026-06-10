@@ -19,3 +19,14 @@ void LoginWidget::onTeacherDiscovered(const QString &name, const QString &ip, qu
         ui->onlineTeacherComboBox->addItem(displayText, uniqueKey);
     }
 }
+
+void LoginWidget::onTeacherDismissed(const QString &name, const QString &ip, quint16 port) {
+    QString displayText = QString("%1(%2)").arg(name, ip);
+    QString uniqueKey = QString("%1:%2").arg(ip).arg(port);
+
+    // 得到离线教师的那条消息
+    int index = ui->onlineTeacherComboBox->findText(displayText);
+    if (index != -1) {
+        ui->onlineTeacherComboBox->removeItem(index);
+    }
+}

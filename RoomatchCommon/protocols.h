@@ -1,6 +1,7 @@
+#pragma pack(push, 1) // 开启 1 字节对齐，绝不允许编译器偷偷塞垃圾字节！
 #ifndef PROTOCOLS_H
 #define PROTOCOLS_H
-#pragma pack(push, 1) // 开启 1 字节对齐，绝不允许编译器偷偷塞垃圾字节！
+
 
 #include <QtTypes>
 
@@ -9,11 +10,18 @@ public:
     Protocols();
 };
 
+// 广播分 2 个状态，教师登录/教师离线
+enum BROADCAST_TYPE :quint16 {
+    BROADCAST_ONLINE = 1,
+    BROADCAST_OFFLINE = 2
+};
+
 // 教师端广播的数据包
 struct SERVERBROADCASTINFO {
     char magic[9];          // 暗号 ROOMATCH
-    quint16 tcpPort;        // 教师端 TCP 监听的端口
     char serverName[32];    // 教师名
+    quint16 tcpPort;        // 教师端 TCP 监听的端口
+    quint16 state;          // 教师状态
 };
 
 /*
@@ -45,5 +53,6 @@ struct USERINFO_PACKET {
     char password[32]; // 固定 32 字节大小的格子
     quint16 type;      // 身份类型
 };
-#pragma pack(pop)
+
 #endif // PROTOCOLS_H
+#pragma pack(pop)

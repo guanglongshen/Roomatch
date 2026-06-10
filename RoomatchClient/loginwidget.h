@@ -14,6 +14,7 @@ public:
 
 public slots:
     void onTeacherDiscovered(const QString &name, const QString &ip, quint16 port);
+    void onTeacherDismissed(const QString &name, const QString &ip, quint16 port);
 
 private slots:
 

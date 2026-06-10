@@ -17,6 +17,7 @@ public:
 
 signals:
     void teacherDiscoveredUI(const QString &name, const QString &ip, quint16 port);
+    void teacherDismissedUI(const QString &name, const QString &ip, quint16 port);
     void loginResultUI(const STATUS &status);
     void registerResultUI(const STATUS &status);
 

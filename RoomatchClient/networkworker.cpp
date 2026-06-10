@@ -85,7 +85,13 @@ void NetworkWorker::onReadPendingDatagrams() {
         if (strncmp(info->magic, "ROOMATCH", 8) == 0) {
             QString teacherName = QString::fromUtf8(info->serverName);
             QString ipStr = senderIP.toString().remove("::ffff:");
-            emit teacherDiscovered(teacherName, ipStr, info->tcpPort);
+
+            // 离线包
+            if (info->state == BROADCAST_OFFLINE) {
+                emit teacherDismissed(teacherName, ipStr, info->tcpPort);
+            } else {
+                emit teacherDiscovered(teacherName, ipStr, info->tcpPort);
+            }
         }
     }
 }

@@ -14,6 +14,7 @@ NetworkManager::NetworkManager() : managerThread(nullptr), worker(nullptr) {
     connect(this, &NetworkManager::registerRequest, worker, &NetworkWorker::onSendRegisterRequest);
 
     connect(worker, &NetworkWorker::teacherDiscovered, this, &NetworkManager::teacherDiscoveredUI);
+    connect(worker, &NetworkWorker::teacherDismissed, this, &NetworkManager::teacherDismissedUI);
     // 登录 / 注册 结果
     connect(worker, &NetworkWorker::loginResponse, this, &NetworkManager::loginResultUI);
     connect(worker, &NetworkWorker::registerResponse, this, &NetworkManager::registerResultUI);
