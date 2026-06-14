@@ -141,3 +141,47 @@ void DatabaseWorker::onLoginUser(const USERINFO &loginInfo) {
     } else {// 处理学生登录
     }
 }
+
+void DatabaseWorker::onRegisterStudent(QTcpSocket *client, const USERINFO &info) {
+    QSqlDatabase db = QSqlDatabase::database("database_worker");
+
+    if (!db.isOpen()) {
+        STATUS err = { 500, tr("教师端数据库未就绪") };
+        emit registerStudentResponse(client, err); // 透传回发
+        return;
+    }
+
+    QSqlQuery query(db);
+    query.prepare("SELECT COUNT(*) FROM account WHERE username = :username AND type = :type");
+    query.bindValue(":username", info.username);
+    query.bindValue(":type", info.type);
+
+    if (!query.exec() || !query.next()) {
+        STATUS fail = { 501, tr("数据库异常") };
+        emit registerStudentResponse(client, fail);
+        return ;
+    }
+
+    if (query.value(0).toInt() > 0) {
+        STATUS fail = { 1, tr("注册失败，该昵称已被其他同学占用！") };
+        emit registerStudentResponse(client, fail);
+        emit eventMessage(tr("学生注册"), tr("拒绝重名学生: %1").arg(info.username));
+        return ;
+    }
+
+    // 写入数据库
+    query.prepare("INSERT INTO account (username, password, type) VALUES (:username, :password, :type)");
+    query.bindValue(":username", info.username);
+    query.bindValue(":password", Tools::encryptPassword(info.pwd));
+    query.bindValue(":type", info.type);
+
+    if (!query.exec()) {
+        STATUS fail = { 502, db.lastError().text() };
+        emit registerStudentResponse(client, fail);
+        return ;
+    }
+
+    STATUS ok{ 0, tr("恭喜，注册成功！") };
+    emit registerStudentResponse(client, ok);
+    emit eventMessage(tr("学生注册"), tr("%1 注册成功").arg(info.username));
+}

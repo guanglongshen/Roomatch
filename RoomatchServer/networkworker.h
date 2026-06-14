@@ -7,6 +7,7 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QList>
+#include <tools.h>
 
 class NetworkWorker : public QObject {
     Q_OBJECT
@@ -23,6 +24,9 @@ signals:
     // 网络事件动态
     void eventMessage(const QString &event, const QString &status);
 
+    // 外接注册请求转数据库
+    void registerRequestToDatabase(QTcpSocket *client, const USERINFO &info);
+
 public slots:
     // 开启网络核心服务
     void onStartNetworkService();
@@ -35,6 +39,9 @@ public slots:
 
     // Client 断开连接
     void onClientDisconnected();
+
+    // 注册回执
+    void onReplyRegisterResult(QTcpSocket *client, const STATUS &status);
 
 private slots:
     // 定时器：若干秒喊话 发送已登录信息

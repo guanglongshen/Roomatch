@@ -25,6 +25,7 @@ void ClientWindow::initNet() {
     // 给注册页面的下拉列表同样操作
     connect(netMgr, &NetworkManager::teacherDiscoveredUI, ui->registerPage, &StudentRegisterWidget::onTeacherDiscovered);
     connect(netMgr, &NetworkManager::teacherDismissedUI, ui->registerPage, &StudentRegisterWidget::onTeacherDismissed);
+
     netMgr->startService();
 }
 

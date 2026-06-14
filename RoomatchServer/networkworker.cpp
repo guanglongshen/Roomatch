@@ -96,6 +96,16 @@ void NetworkWorker::onRead() {
             emit logMessage(tr("[注册请求] 报文"), tr("received，长度：%1").arg(header.length), "Net Server");
 
             // TODO 交给 DatabaseManager 注册事项
+            USERINFO_PACKET *packet = reinterpret_cast<USERINFO_PACKET*>(bodyData.data());
+
+            // 转换为本地业务结构体
+            USERINFO info;
+            info.username = QString::fromUtf8(packet->username);
+            info.pwd = QString::fromUtf8(packet->password);
+            info.type = packet->type;
+
+            // 发送给数据库处理
+            emit registerRequestToDatabase(client, info);
         } else if (header.type == MSG_LOGIN_REQ) {
             emit logMessage(tr("[登录请求] 报文"), "received", "Net Server");
 
@@ -114,6 +124,32 @@ void NetworkWorker::onClientDisconnected() {
 
     clientSockets.removeOne(client);// 终端列表删除它
     client->deleteLater();          // 释放内存
+}
+
+void NetworkWorker::onReplyRegisterResult(QTcpSocket *client, const STATUS &status) {
+    // 检查是否仍在连接
+    if (!clientSockets.contains(client)) return;
+
+    // 组装发送给学生的包
+    PACKETHEADER header;
+    header.magic = MAGICNUM;
+    header.length = sizeof(NET_STATUS);
+    header.type = MSG_REGISTER_RES;
+
+    // 状态包体
+    NET_STATUS reply;
+    memset(&reply, 0, sizeof(NET_STATUS));
+    reply.code = status.code;
+    strncpy_s(reply.msg, status.info.toUtf8().constData(), sizeof(reply.msg) - 1);
+
+    QByteArray buffer;
+    buffer.append(reinterpret_cast<const char*>(&header), sizeof(PACKETHEADER));
+    buffer.append(reinterpret_cast<const char*>(&reply), sizeof(NET_STATUS));
+
+    qDebug() << "写回学生注册数据";
+
+    client->write(buffer);
+    client->disconnectFromHost();
 }
 
 void NetworkWorker::onSendBroadcast() {
@@ -143,7 +179,7 @@ void NetworkWorker::onSendBroadcast() {
     // udpSocket->writeDatagram(datagram, QHostAddress::LocalHost, studentListenerPort);
 
     // 测试
-    emit logMessage("UDP 广播心跳包", tr("教师：%1").arg(serverName), "Net Server");
+    // emit logMessage("UDP 广播心跳包", tr("教师：%1").arg(serverName), "Net Server");
 }
 
 void NetworkWorker::onSendLogoutBroadcast() {

@@ -1,6 +1,7 @@
 #ifndef STUDENTREGISTERWIDGET_H
 #define STUDENTREGISTERWIDGET_H
 
+#include "tools.h"
 #include <QWidget>
 
 namespace Ui { class StudentRegisterWidget; }
@@ -23,7 +24,10 @@ public slots:
 private:
     Ui::StudentRegisterWidget *ui;
 
-
+    // 重写
+    void rewriteForm();
+    // 隐藏提示
+    void hideTip();
 };
 
 #endif // STUDENTREGISTERWIDGET_H

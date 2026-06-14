@@ -19,6 +19,9 @@ public:
     // 关闭网络 Manager 服务
     void stopService();
 
+    // 将worker 暴露于公共
+    NetworkWorker* getWorker() const { return worker; }
+
 signals:
     // 转发给 ServerWindow
     void logNotify(const QString &event, const QString &status, const QString &source);

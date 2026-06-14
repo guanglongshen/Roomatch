@@ -2,6 +2,7 @@
 #define DATABASEWORKER_H
 
 #include <QObject>
+#include <QTcpSocket>
 #include <tools.h>
 
 class DatabaseWorker : public QObject {
@@ -17,6 +18,9 @@ public:
     // 登录用户函数
     void onLoginUser(const USERINFO &loginInfo);
 
+    // 注册学生用户
+    void onRegisterStudent(QTcpSocket *client, const USERINFO &info);
+
 signals:
     // 所有对数据库核心操作返回的信息
     void logMessage(const QString &event, const QString &statusText, const QString &source);
@@ -27,6 +31,9 @@ signals:
     void registerUserResponse(const STATUS &code);
     // 登录用户返回状态
     void loginUserResponse(const STATUS &code, const QString &username);
+
+    // 学生注册返回信息
+    void registerStudentResponse(QTcpSocket *client, const STATUS &code);
 };
 
 #endif // DATABASEWORKER_H

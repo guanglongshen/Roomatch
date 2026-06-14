@@ -42,4 +42,8 @@ DatabaseManager::DatabaseManager() {
     // 登录用户信号与槽
     connect(this, &DatabaseManager::loginRequest, worker, &DatabaseWorker::onLoginUser);
     connect(worker, &DatabaseWorker::loginUserResponse, this, &DatabaseManager::loginResult);
+
+    // 学生注册
+    connect(this, &DatabaseManager::registerStudentRequest, worker, &DatabaseWorker::onRegisterStudent);
+    connect(worker, &DatabaseWorker::registerStudentResponse, this, &DatabaseManager::registerStudentResult);
 }

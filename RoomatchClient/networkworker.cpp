@@ -61,7 +61,48 @@ void NetworkWorker::onSendLoginRequest(const QString &ip, quint16 port, const US
 }
 
 void NetworkWorker::onSendRegisterRequest(const QString &ip, quint16 port, const USERINFO &info) {
-    // TODO：注册请求
+    qDebug() << "准备发送";
+    if (tcpClient->state() == QAbstractSocket::ConnectedState) {
+        qDebug() << "连接状态不对";
+        tcpClient->disconnectFromHost();
+    }
+
+    tcpClient->connectToHost(ip, port);
+    // 3s 连接宽容度
+    if (!tcpClient->waitForConnected(3000)) {
+        NET_STATUS fail;
+        fail.code = 300;
+        strncpy_s(fail.msg, tr("网络连接失败！").toUtf8().constData(), sizeof(fail.msg) - 1);
+
+        emit registerResponse(fail);
+        qDebug() << "连接超时";
+        return ;
+    }
+
+    qDebug() << "连接ok";
+
+    // 包头
+    PACKETHEADER header;
+    header.magic = MAGICNUM;
+    header.type = MSG_REGISTER_REQ;
+    header.length = sizeof(USERINFO_PACKET);
+
+    // 包体
+    USERINFO_PACKET packet;
+    memset(&packet, 0, sizeof(USERINFO_PACKET));
+    QByteArray userBytes = info.username.toUtf8();
+    QByteArray pwdBytes = info.pwd.toUtf8();
+
+    strncpy_s(packet.username, userBytes.constData(), sizeof(packet.username) - 1);
+    strncpy_s(packet.password, pwdBytes.constData(), sizeof(packet.password) - 1);
+    packet.type = (quint16)info.type;
+
+    // 序列化
+    QByteArray buffer;
+    buffer.append(reinterpret_cast<char*>(&header), sizeof(PACKETHEADER));
+    buffer.append(reinterpret_cast<char*>(&packet), sizeof(USERINFO_PACKET));
+
+    tcpClient->write(buffer);
 }
 
 // UDP 接收
@@ -98,4 +139,48 @@ void NetworkWorker::onReadPendingDatagrams() {
 void NetworkWorker::onTcpReadyRead() {
     // 处理教师端发回来的 结果包
     // 剥离数据，发信号处理 UI
+
+    qDebug() << "===[网络层]=== 收到 TCP 数据！当前缓冲区可用字节数:" << tcpClient->bytesAvailable();
+
+    while (tcpClient->bytesAvailable() > 0) {
+        if (tcpClient->bytesAvailable() < sizeof(PACKETHEADER)) {
+            qDebug() << "⚠ 墙 1 放行失败：当前字节数不够一个包头大小(" << sizeof(PACKETHEADER) << ")，继续等待...";
+            return ;
+        }
+
+        PACKETHEADER header;
+        tcpClient->peek(reinterpret_cast<char*>(&header), sizeof(PACKETHEADER));
+
+        qDebug() << "🔍 解析包头 -> Magic:" << header.magic
+                 << " | Type:" << header.type
+                 << " | Length:" << header.length;
+
+        if (header.magic != MAGICNUM) {
+            qDebug() << "❌ 墙 2 拦截：魔数不匹配！期望:" << MAGICNUM << " 实际收到:" << header.magic << "。正在强制断开！";
+            tcpClient->disconnectFromHost();
+            return ;
+        }
+
+        if ((quint64)tcpClient->bytesAvailable() < (quint64)(sizeof(PACKETHEADER) + header.length)) {
+            qDebug() << "⚠️ 墙 3 放行失败：数据未接收全。期望总大小:" << sizeof(PACKETHEADER) + header.length
+                     << " 当前只有:" << tcpClient->bytesAvailable() << "，等待下一次 readyRead...";
+            return ;
+        }
+
+        // 读取包体
+        QByteArray allData = tcpClient->read(sizeof(PACKETHEADER) + header.length);
+        QByteArray bodyData = allData.mid(sizeof(PACKETHEADER));
+
+        // 拆解回复包
+        if (header.type == MSG_REGISTER_RES) {
+            // 注册信息发回
+            if (bodyData.size() >= sizeof(NET_STATUS)) {
+                NET_STATUS *resStatus = reinterpret_cast<NET_STATUS*>(bodyData.data());
+                qDebug() << "注册信息拿回";
+                emit registerResponse(*resStatus);
+            }
+
+            tcpClient->disconnectFromHost();
+        }
+    }
 }

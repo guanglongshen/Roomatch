@@ -15,6 +15,11 @@ public:
     // 启动线程服务
     void startService();
 
+    // 公共槽函数
+    void requestRegisterStudent(QTcpSocket *client, const USERINFO &info) {
+        emit registerStudentRequest(client, info);
+    }
+
 signals:
     // 日志通知
     void logNotify(const QString &event, const QString &statusText, const QString &source);
@@ -30,6 +35,12 @@ signals:
     void loginRequest(const USERINFO &loginInfo);
     // 登录用户结果
     void loginResult(const STATUS &status, const QString &username);
+
+    // 学生注册结果
+    void registerStudentResult(QTcpSocket *client, const STATUS &status);
+    // 学生注册请求
+    void registerStudentRequest(QTcpSocket *client, const USERINFO &info);
+
 
 private:
     DatabaseManager();

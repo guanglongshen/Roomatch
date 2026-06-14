@@ -5,6 +5,7 @@
 #include <QObject>
 #include <QUdpSocket>
 #include <QTcpSocket>
+#include <protocols.h>
 
 class NetworkWorker : public QObject {
     Q_OBJECT
@@ -29,8 +30,9 @@ signals:
     // 教师离线
     void teacherDismissed(const QString &name, const QString &ip, quint16 port);
 
+    // 登录结果，注册结果
     void loginResponse(const STATUS &status);
-    void registerResponse(const STATUS &status);
+    void registerResponse(const NET_STATUS &status);
 
 private:
     QUdpSocket *udpListener = nullptr;

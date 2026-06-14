@@ -54,5 +54,11 @@ struct USERINFO_PACKET {
     quint16 type;      // 身份类型
 };
 
+// 状态
+struct NET_STATUS {
+    quint32 code;
+    char msg[512];
+};
+
 #endif // PROTOCOLS_H
 #pragma pack(pop)
