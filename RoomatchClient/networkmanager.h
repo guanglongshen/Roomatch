@@ -26,6 +26,9 @@ signals:
     // 登录注册的信号转发回 UI
     void registerReply(const NET_STATUS &status);
     void loginReply(const NET_STATUS &status);
+
+    // 学生登出信号
+    void logoutRequest();
 private:
     NetworkManager();
     QThread *managerThread;

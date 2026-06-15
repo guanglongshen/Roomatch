@@ -16,13 +16,19 @@ public slots:
     // 初始化套接字
     void onInitializeNetwork();
 
-    // 登录请求
+    // 登录请求 注册请求
     void onSendLoginRequest(const QString &ip, quint16 port, const USERINFO &info);
     void onSendRegisterRequest(const QString &ip, quint16 port, const USERINFO &info);
+
+    // 登出通讯，因为已经连接上了，不需要 ip prot 去连接了
+    void onSendLogoutRequest();
 
 private slots:
     void onReadPendingDatagrams();  // UDP广播监听
     void onTcpReadyRead();          // TCP回复监听
+
+    // 心跳包
+    void onSendHeartBeat();
 
 signals:
     // 发现教师
@@ -38,6 +44,8 @@ private:
     QUdpSocket *udpListener = nullptr;
     QTcpSocket *tcpClient = nullptr;
     quint16 teacherPort = 55520;
+
+    QTimer *heartbeatTimer = nullptr;   // 心跳包计时器
 };
 
 #endif // NETWORKWORKER_H

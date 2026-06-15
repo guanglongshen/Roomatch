@@ -18,6 +18,9 @@ NetworkManager::NetworkManager() : managerThread(nullptr), worker(nullptr) {
     // 登录 / 注册 结果
     connect(worker, &NetworkWorker::loginResponse, this, &NetworkManager::loginReply);
     connect(worker, &NetworkWorker::registerResponse, this, &NetworkManager::registerReply);
+
+    // 登出信号
+    connect(this, &NetworkManager::logoutRequest, worker, &NetworkWorker::onSendLogoutRequest);
 }
 
 NetworkManager::~NetworkManager() {

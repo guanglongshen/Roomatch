@@ -34,6 +34,8 @@ enum MESSAGETYPE : quint16 {
     MSG_REGISTER_RES = 0x1002,      // S->C 注册回应
     MSG_LOGIN_REQ    = 0x1003,      // C->S 登录请求
     MSG_LOGIN_RES    = 0x1004,      // S->C 登录回应
+    MSG_LOGOUT_REQ   = 0x1005,      // 学生登出通知
+    MSG_HEARTBEAT    = 0x1006,      // 学生持续在线消息
 };
 
 // 统一 TCP 报文包头

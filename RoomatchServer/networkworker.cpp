@@ -118,8 +118,25 @@ void NetworkWorker::onRead() {
             info.pwd = QString::fromUtf8(packet->password);
             info.type = packet->type;
 
+            // 学生登录的时候，将这个名字贴在这个套接字上
+            client->setProperty("username", info.username);
+
             // 发送给数据库处理登录信息做验证
             emit loginRequestToDatabase(client, info);
+        } else if (header.type == MSG_LOGOUT_REQ) {
+            // 学生登出网络包
+            QString username = client->property("username").toString();
+
+            emit logMessage(tr("[登出通讯] 报文"), "received", "Net Server");
+            emit eventMessage(tr("学生登出"), tr("ok, %1 用户已登出").arg(username));
+            emit studentStatusChanged(username, 0, tr("离线"), "");
+            client->disconnectFromHost();   // 教师端断开连接
+        } else if (header.type == MSG_HEARTBEAT) {
+            // 收到学生的心跳包，防止死网情况
+            QString username = client->property("username").toString();
+
+            // TODO：记录最后在线时间
+            qDebug() << "来自 " << username << " 在线心跳";
         }
     }
 }
@@ -129,8 +146,13 @@ void NetworkWorker::onClientDisconnected() {
     QTcpSocket *client = qobject_cast<QTcpSocket*>(sender());
     if (!client) return;
 
-    QString ip = client->peerAddress().toString().remove("::ffff:");
-    emit logMessage(tr("终端：%1 离线").arg(ip), "ok", "Net Server");
+    QString username = client->property("username").toString();
+    if (!username.isEmpty()) {
+        onlineStudentsMap.remove(username);
+        emit eventMessage(tr("学生离线"), tr("%1 已断开连接").arg(username));
+
+        emit studentStatusChanged(username, 0, tr("离线"), "");
+    }
 
     clientSockets.removeOne(client);// 终端列表删除它
     client->deleteLater();          // 释放内存
@@ -184,6 +206,15 @@ void NetworkWorker::onReplyLoginResult(QTcpSocket *client, const STATUS &status)
     // 登录失败的，TcpSocket 不留，断开连接
     if (status.code != 0) {
         client->disconnectFromHost();
+    } else {
+        // 登录成功
+        QString username = client->property("username").toString();
+        QString ip = client->peerAddress().toString().remove("::ffff:");
+
+        onlineStudentsMap.insert(username, client);
+
+        // UI 在主页面显示学生
+        emit studentStatusChanged(username, 1, tr("在线"), ip);
     }
 }
 

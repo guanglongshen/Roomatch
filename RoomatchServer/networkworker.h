@@ -7,6 +7,7 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QList>
+#include <QHash>
 #include <tools.h>
 
 class NetworkWorker : public QObject {
@@ -28,6 +29,9 @@ signals:
     void registerRequestToDatabase(QTcpSocket *client, const USERINFO &info);
     // 外接登录请求转数据库
     void loginRequestToDatabase(QTcpSocket *client, const USERINFO &info);
+
+    // 学生的状态改变通知
+    void studentStatusChanged(const QString &username, const int &code, const QString &status, const QString &ip);
 
 public slots:
     // 开启网络核心服务
@@ -62,6 +66,8 @@ private:
 
     QTcpServer *tcpServer = nullptr;
     QList<QTcpSocket *> clientSockets;              // 存放所有 Client
+
+    QHash<QString, QTcpSocket*> onlineStudentsMap;  // 快速通过名字找到 Client
 };
 
 #endif // NETWORKWORKER_H

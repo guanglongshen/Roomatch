@@ -1,6 +1,8 @@
 #include "networkworker.h"
 #include "protocols.h"
 
+#include <QTimer>
+
 NetworkWorker::NetworkWorker(QObject *parent)
     : QObject{parent} {}
 
@@ -19,6 +21,10 @@ void NetworkWorker::onInitializeNetwork() {
 
     // 绑定 TCP 信号
     connect(tcpClient, &QTcpSocket::readyRead, this, &NetworkWorker::onTcpReadyRead);
+
+    // 绑定心跳包
+    heartbeatTimer = new QTimer(this);
+    connect(heartbeatTimer, &QTimer::timeout, this, &NetworkWorker::onSendHeartBeat);
 }
 
 // 发送登录请求
@@ -62,10 +68,11 @@ void NetworkWorker::onSendLoginRequest(const QString &ip, quint16 port, const US
     tcpClient->write(buffer);
 }
 
+// 发送注册请求
 void NetworkWorker::onSendRegisterRequest(const QString &ip, quint16 port, const USERINFO &info) {
-    qDebug() << "准备发送";
+    // qDebug() << "准备发送";
     if (tcpClient->state() == QAbstractSocket::ConnectedState) {
-        qDebug() << "连接状态不对";
+        // qDebug() << "连接状态不对";
         tcpClient->disconnectFromHost();
     }
 
@@ -77,11 +84,11 @@ void NetworkWorker::onSendRegisterRequest(const QString &ip, quint16 port, const
         strncpy_s(fail.msg, tr("网络连接失败！").toUtf8().constData(), sizeof(fail.msg) - 1);
 
         emit registerResponse(fail);
-        qDebug() << "连接超时";
+        // qDebug() << "连接超时";
         return ;
     }
 
-    qDebug() << "连接ok";
+    // qDebug() << "连接ok";
 
     // 包头
     PACKETHEADER header;
@@ -105,6 +112,24 @@ void NetworkWorker::onSendRegisterRequest(const QString &ip, quint16 port, const
     buffer.append(reinterpret_cast<char*>(&packet), sizeof(USERINFO_PACKET));
 
     tcpClient->write(buffer);
+}
+
+void NetworkWorker::onSendLogoutRequest() {
+    // 停掉 心脏包
+    heartbeatTimer->stop();
+
+    if (tcpClient->state() == QAbstractSocket::ConnectedState) {
+        // 报告给教师端，我要离线了
+        PACKETHEADER header;
+        header.length = 0;
+        header.type = MSG_LOGOUT_REQ;
+        header.magic = MAGICNUM;
+
+        tcpClient->write(reinterpret_cast<const char*>(&header), sizeof(PACKETHEADER));
+
+        // 等待数据发出后断开连接
+        tcpClient->disconnectFromHost();
+    }
 }
 
 // UDP 接收
@@ -138,34 +163,35 @@ void NetworkWorker::onReadPendingDatagrams() {
     }
 }
 
+// TCP 接收消息
 void NetworkWorker::onTcpReadyRead() {
     // 处理教师端发回来的 结果包
     // 剥离数据，发信号处理 UI
 
-    qDebug() << "===[网络层]=== 收到 TCP 数据！当前缓冲区可用字节数:" << tcpClient->bytesAvailable();
+    // qDebug() << "===[网络层]=== 收到 TCP 数据！当前缓冲区可用字节数:" << tcpClient->bytesAvailable();
 
     while (tcpClient->bytesAvailable() > 0) {
         if (tcpClient->bytesAvailable() < sizeof(PACKETHEADER)) {
-            qDebug() << "⚠ 墙 1 放行失败：当前字节数不够一个包头大小(" << sizeof(PACKETHEADER) << ")，继续等待...";
+            // qDebug() << "⚠ 墙 1 放行失败：当前字节数不够一个包头大小(" << sizeof(PACKETHEADER) << ")，继续等待...";
             return ;
         }
 
         PACKETHEADER header;
         tcpClient->peek(reinterpret_cast<char*>(&header), sizeof(PACKETHEADER));
 
-        qDebug() << "🔍 解析包头 -> Magic:" << header.magic
-                 << " | Type:" << header.type
-                 << " | Length:" << header.length;
+        // qDebug() << "🔍 解析包头 -> Magic:" << header.magic
+        //          << " | Type:" << header.type
+        //          << " | Length:" << header.length;
 
         if (header.magic != MAGICNUM) {
-            qDebug() << "❌ 墙 2 拦截：魔数不匹配！期望:" << MAGICNUM << " 实际收到:" << header.magic << "。正在强制断开！";
+            // qDebug() << "❌ 墙 2 拦截：魔数不匹配！期望:" << MAGICNUM << " 实际收到:" << header.magic << "。正在强制断开！";
             tcpClient->disconnectFromHost();
             return ;
         }
 
         if ((quint64)tcpClient->bytesAvailable() < (quint64)(sizeof(PACKETHEADER) + header.length)) {
-            qDebug() << "⚠ 墙 3 放行失败：数据未接收全。期望总大小:" << sizeof(PACKETHEADER) + header.length
-                     << " 当前只有:" << tcpClient->bytesAvailable() << "，等待下一次 readyRead...";
+            // qDebug() << "⚠ 墙 3 放行失败：数据未接收全。期望总大小:" << sizeof(PACKETHEADER) + header.length
+            //          << " 当前只有:" << tcpClient->bytesAvailable() << "，等待下一次 readyRead...";
             return ;
         }
 
@@ -187,8 +213,24 @@ void NetworkWorker::onTcpReadyRead() {
             // 登录信息
             if (bodyData.size() >= sizeof(NET_STATUS)) {
                 NET_STATUS *loginStatus = reinterpret_cast<NET_STATUS*>(bodyData.data());
+
+                if (loginStatus->code == 0) {   // 在 NetworkWorker 中已经看到登录成功，开启计时器
+                    heartbeatTimer->start(10000);
+                }
                 emit loginResponse(*loginStatus);
             }
         }
     }
+}
+
+// 发出心跳包
+void NetworkWorker::onSendHeartBeat() {
+    if (tcpClient->state() != QAbstractSocket::ConnectedState) return ;
+
+    PACKETHEADER header;
+    header.magic = MAGICNUM;
+    header.length = 0;  // 无后续包体，只是告诉服务器端，这个学生还在连接着
+    header.type = MSG_HEARTBEAT;
+
+    tcpClient->write(reinterpret_cast<const char*>(&header), sizeof(PACKETHEADER));
 }

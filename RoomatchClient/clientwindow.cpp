@@ -45,6 +45,13 @@ void ClientWindow::initConnect() {
         smoothChangePage(ui->loginPage, ui->homePage);
         ui->statusbar->showMessage("登录成功!", 2000);
     });
+
+    // 主页面退出登录回到登录页面
+    connect(ui->homePage, &StudentHomeWidget::toLoginPage, this, [this](){
+        smoothChangePage(ui->homePage, ui->loginPage);
+    });
+
+
 }
 
 void ClientWindow::initStackedWidget() {

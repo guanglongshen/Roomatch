@@ -12,8 +12,13 @@ public:
     explicit StudentHomeWidget(QWidget *parent = nullptr);
     ~StudentHomeWidget();
 
+signals:
+    void toLoginPage();
+
 private:
     Ui::StudentHomeWidget *ui;
+
+    void initConnection();
 };
 
 #endif // STUDENTHOMEWIDGET_H
