@@ -219,6 +219,8 @@ void DatabaseWorker::onLoginStudent(QTcpSocket *client, const USERINFO &info) {
             updateQuery.prepare("UPDATE account SET last_login = DATETIME('now', 'localtime') WHERE username = :username AND type = :type");
             updateQuery.bindValue(":username", info.username);
             updateQuery.bindValue(":type", info.type);
+
+            updateQuery.exec(); // 执行更新最后登录时间
         } else {
             STATUS wrong = { 503, tr("密码错误") };
             emit loginStudentResponse(client, wrong);

@@ -22,4 +22,9 @@ void StudentHomeWidget::initConnection() {
         // 发出信号，让 worker 去执行 onSendLogoutRequest
         emit NetworkManager::instance()->logoutRequest();
     });
+
+    // 教师传来的强制登出信号
+    connect(NetworkManager::instance(), &NetworkManager::forceLogoutReply, this, [this](){
+        emit toLoginPage();
+    });
 }

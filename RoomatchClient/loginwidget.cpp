@@ -46,8 +46,8 @@ LoginWidget::LoginWidget(QWidget *parent)
         info.username = username;
         info.pwd = pwd;
 
-        qDebug() << "申请登录";
-        qDebug() << "地址：" << teacherIP << ":" << teacherPort;
+        // qDebug() << "申请登录";
+        // qDebug() << "地址：" << teacherIP << ":" << teacherPort;
         ui->loginBtn->setEnabled(false);
         emit NetworkManager::instance()->loginRequest(teacherIP, teacherPort, info);
     });

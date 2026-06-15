@@ -168,30 +168,30 @@ void NetworkWorker::onTcpReadyRead() {
     // 处理教师端发回来的 结果包
     // 剥离数据，发信号处理 UI
 
-    // qDebug() << "===[网络层]=== 收到 TCP 数据！当前缓冲区可用字节数:" << tcpClient->bytesAvailable();
+    qDebug() << "===[网络层]=== 收到 TCP 数据！当前缓冲区可用字节数:" << tcpClient->bytesAvailable();
 
     while (tcpClient->bytesAvailable() > 0) {
         if (tcpClient->bytesAvailable() < sizeof(PACKETHEADER)) {
-            // qDebug() << "⚠ 墙 1 放行失败：当前字节数不够一个包头大小(" << sizeof(PACKETHEADER) << ")，继续等待...";
+            qDebug() << "⚠ 墙 1 放行失败：当前字节数不够一个包头大小(" << sizeof(PACKETHEADER) << ")，继续等待...";
             return ;
         }
 
         PACKETHEADER header;
         tcpClient->peek(reinterpret_cast<char*>(&header), sizeof(PACKETHEADER));
 
-        // qDebug() << "🔍 解析包头 -> Magic:" << header.magic
-        //          << " | Type:" << header.type
-        //          << " | Length:" << header.length;
+        qDebug() << "🔍 解析包头 -> Magic:" << header.magic
+                 << " | Type:" << header.type
+                 << " | Length:" << header.length;
 
         if (header.magic != MAGICNUM) {
-            // qDebug() << "❌ 墙 2 拦截：魔数不匹配！期望:" << MAGICNUM << " 实际收到:" << header.magic << "。正在强制断开！";
+            qDebug() << "❌ 墙 2 拦截：魔数不匹配！期望:" << MAGICNUM << " 实际收到:" << header.magic << "。正在强制断开！";
             tcpClient->disconnectFromHost();
             return ;
         }
 
         if ((quint64)tcpClient->bytesAvailable() < (quint64)(sizeof(PACKETHEADER) + header.length)) {
-            // qDebug() << "⚠ 墙 3 放行失败：数据未接收全。期望总大小:" << sizeof(PACKETHEADER) + header.length
-            //          << " 当前只有:" << tcpClient->bytesAvailable() << "，等待下一次 readyRead...";
+            qDebug() << "⚠ 墙 3 放行失败：数据未接收全。期望总大小:" << sizeof(PACKETHEADER) + header.length
+                     << " 当前只有:" << tcpClient->bytesAvailable() << "，等待下一次 readyRead...";
             return ;
         }
 
@@ -219,6 +219,20 @@ void NetworkWorker::onTcpReadyRead() {
                 }
                 emit loginResponse(*loginStatus);
             }
+        } else if (header.type == FORCE_LOGOUT) {
+            // 强制登出
+            // 停止心跳包
+            qDebug() << "收到强制登出消息包";
+            if (heartbeatTimer && heartbeatTimer->isActive()) {
+                heartbeatTimer->stop();
+            }
+
+            // 切断 tcp 连接
+            if (tcpClient->state() == QAbstractSocket::ConnectedState) {
+                tcpClient->disconnectFromHost();
+            }
+
+            emit forceLogoutResponse();
         }
     }
 }

@@ -36,6 +36,7 @@ enum MESSAGETYPE : quint16 {
     MSG_LOGIN_RES    = 0x1004,      // S->C 登录回应
     MSG_LOGOUT_REQ   = 0x1005,      // 学生登出通知
     MSG_HEARTBEAT    = 0x1006,      // 学生持续在线消息
+    FORCE_LOGOUT     = 0x1007,      // 因教师已经登出，强制学生下线
 };
 
 // 统一 TCP 报文包头

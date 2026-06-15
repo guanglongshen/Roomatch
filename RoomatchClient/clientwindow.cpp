@@ -50,8 +50,6 @@ void ClientWindow::initConnect() {
     connect(ui->homePage, &StudentHomeWidget::toLoginPage, this, [this](){
         smoothChangePage(ui->homePage, ui->loginPage);
     });
-
-
 }
 
 void ClientWindow::initStackedWidget() {

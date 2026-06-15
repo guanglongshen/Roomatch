@@ -29,6 +29,9 @@ signals:
 
     // 学生登出信号
     void logoutRequest();
+
+    // 强制学生登出
+    void forceLogoutReply();
 private:
     NetworkManager();
     QThread *managerThread;

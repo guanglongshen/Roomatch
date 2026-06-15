@@ -40,6 +40,9 @@ signals:
     void loginResponse(const NET_STATUS &status);
     void registerResponse(const NET_STATUS &status);
 
+    // 强制登出信号
+    void forceLogoutResponse();
+
 private:
     QUdpSocket *udpListener = nullptr;
     QTcpSocket *tcpClient = nullptr;

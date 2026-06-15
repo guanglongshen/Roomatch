@@ -21,6 +21,9 @@ NetworkManager::NetworkManager() : managerThread(nullptr), worker(nullptr) {
 
     // 登出信号
     connect(this, &NetworkManager::logoutRequest, worker, &NetworkWorker::onSendLogoutRequest);
+
+    // 教师强制登出信号
+    connect(worker, &NetworkWorker::forceLogoutResponse, this, &NetworkManager::forceLogoutReply);
 }
 
 NetworkManager::~NetworkManager() {

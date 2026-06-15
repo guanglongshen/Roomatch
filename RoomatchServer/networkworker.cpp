@@ -248,6 +248,7 @@ void NetworkWorker::onSendBroadcast() {
     // emit logMessage("UDP 广播心跳包", tr("教师：%1").arg(serverName), "Net Server");
 }
 
+// 主动退出登录的信号 包括直接关闭 server window
 void NetworkWorker::onSendLogoutBroadcast() {
     // 停止计时器，不再发送广播
     if (broadcastTimer) {
@@ -267,12 +268,7 @@ void NetworkWorker::onSendLogoutBroadcast() {
         udpSocket->writeDatagram(datagram, QHostAddress::Broadcast, studentListenerPort);
     }
 
-    for (QTcpSocket *socket : std::as_const(clientSockets)) {
-        if (socket && socket->isOpen()) {
-            socket->disconnectFromHost();
-        }
-    }
-
+    // 关闭 tcpServer 监听，不接受任何新的请求
     if (tcpServer && tcpServer->isListening()) {
         tcpServer->close();
     }
@@ -282,9 +278,40 @@ void NetworkWorker::onSendLogoutBroadcast() {
         broadcastTimer->stop();
     }
 
+    PACKETHEADER header;
+    header.length = 0;
+    header.magic = MAGICNUM;
+    header.type = FORCE_LOGOUT;
+
+    // 读取连接的所有 tcpSockets 并强制让它们登出
+    while (!clientSockets.isEmpty()) {
+        // 取第一个
+        QTcpSocket *stu = clientSockets.takeFirst();
+
+        if (stu) {
+            // 发送强制下线消息包
+            stu->write(reinterpret_cast<const char*>(&header), sizeof(PACKETHEADER));
+            // 立刻将缓冲区的数据起飞
+            stu->flush();
+
+            // 最多等待数据写入 1000 ms
+            if (!stu->waitForBytesWritten(1000)) {
+                emit logMessage(tr("强制登出包数据写入"), tr("网络异常"), "Net Server");
+            }
+
+            // 解除它所有的信号槽 防止触发 onClientDisconnected
+            stu->disconnect();
+
+            // 断开连接并延迟销毁
+            stu->disconnectFromHost();
+            stu->deleteLater();
+        }
+    }
+    onlineStudentsMap.clear();
+
     emit eventMessage(tr("退出登录"), tr("%1 已登出").arg(serverName));
     // 测试
-    emit logMessage("UDP 广播心跳包", tr("端口：%1，教师：%2，已停止").arg(tcpPort).arg(serverName), "Net Server");
+    emit logMessage(tr("UDP 广播心跳包"), tr("端口：%1，教师：%2，已停止").arg(tcpPort).arg(serverName), "Net Server");
 }
 
 // 公共接口
