@@ -8,7 +8,11 @@ HomeWidget::HomeWidget(QWidget *parent)
     ui->setupUi(this);
     // 视觉效果
     ui->contestTree->header()->setSectionResizeMode(QHeaderView::ResizeToContents); // 自动适配内容大小
+    ui->contestTree->setRootIsDecorated(false);                                     // 不折叠
+    ui->contestTree->setIndentation(0);
     ui->onlineTree->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    ui->onlineTree->setRootIsDecorated(false);
+    ui->onlineTree->setIndentation(0);                                              // 无缩进
 
     initConn();
 }
