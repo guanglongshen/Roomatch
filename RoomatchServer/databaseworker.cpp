@@ -185,3 +185,50 @@ void DatabaseWorker::onRegisterStudent(QTcpSocket *client, const USERINFO &info)
     emit registerStudentResponse(client, ok);
     emit eventMessage(tr("学生注册"), tr("%1 注册成功").arg(info.username));
 }
+
+void DatabaseWorker::onLoginStudent(QTcpSocket *client, const USERINFO &info) {
+    QSqlDatabase db = QSqlDatabase::database("database_worker");
+
+    if (!db.isOpen()) {
+        STATUS err = { 500, tr("教师端数据库未就绪") };
+        emit loginStudentResponse(client, err); // 透传回发
+        return;
+    }
+
+    QSqlQuery query(db);
+    query.prepare("SELECT password FROM account WHERE username = :username AND type = :type");
+    query.bindValue(":username", info.username);
+    query.bindValue(":type", info.type);
+
+    if (!query.exec()) {
+        STATUS fail = { 501, tr("数据库异常") };
+        emit loginStudentResponse(client, fail);
+        return ;
+    }
+
+    if (query.next()) {
+        // 存在用户
+        QString dbPwd = query.value("password").toString();
+        if (dbPwd == Tools::encryptPassword(info.pwd)) {
+            STATUS ok = { 0, tr("登录成功") };
+            emit loginStudentResponse(client, ok);
+            emit eventMessage(tr("学生登录"), tr("ok, %1 已登录").arg(info.username));
+
+            // 更新最后一次登录时间
+            QSqlQuery updateQuery(db);
+            updateQuery.prepare("UPDATE account SET last_login = DATETIME('now', 'localtime') WHERE username = :username AND type = :type");
+            updateQuery.bindValue(":username", info.username);
+            updateQuery.bindValue(":type", info.type);
+        } else {
+            STATUS wrong = { 503, tr("密码错误") };
+            emit loginStudentResponse(client, wrong);
+            emit eventMessage(tr("学生登录"), tr("error，%1 用户密码错误").arg(info.username));
+        }
+
+    } else {
+        // 不存在用户
+        STATUS noexist = { 502, tr("用户不存在") };
+        emit loginStudentResponse(client, noexist);
+        emit eventMessage(tr("学生登录"), tr("登录失败，%1 用户不存在").arg(info.username));
+    }
+}

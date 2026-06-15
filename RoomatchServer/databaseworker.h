@@ -20,6 +20,8 @@ public:
 
     // 注册学生用户
     void onRegisterStudent(QTcpSocket *client, const USERINFO &info);
+    // 登录学生用户
+    void onLoginStudent(QTcpSocket *client, const USERINFO &info);
 
 signals:
     // 所有对数据库核心操作返回的信息
@@ -34,6 +36,8 @@ signals:
 
     // 学生注册返回信息
     void registerStudentResponse(QTcpSocket *client, const STATUS &code);
+    // 学生登录返回信息
+    void loginStudentResponse(QTcpSocket *client, const STATUS &code);
 };
 
 #endif // DATABASEWORKER_H

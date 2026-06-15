@@ -26,6 +26,8 @@ signals:
 
     // 外接注册请求转数据库
     void registerRequestToDatabase(QTcpSocket *client, const USERINFO &info);
+    // 外接登录请求转数据库
+    void loginRequestToDatabase(QTcpSocket *client, const USERINFO &info);
 
 public slots:
     // 开启网络核心服务
@@ -42,6 +44,8 @@ public slots:
 
     // 注册回执
     void onReplyRegisterResult(QTcpSocket *client, const STATUS &status);
+    // 登录回执
+    void onReplyLoginResult(QTcpSocket *client, const STATUS &status);
 
 private slots:
     // 定时器：若干秒喊话 发送已登录信息

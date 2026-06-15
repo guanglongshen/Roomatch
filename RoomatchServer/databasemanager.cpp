@@ -46,4 +46,9 @@ DatabaseManager::DatabaseManager() {
     // 学生注册
     connect(this, &DatabaseManager::registerStudentRequest, worker, &DatabaseWorker::onRegisterStudent);
     connect(worker, &DatabaseWorker::registerStudentResponse, this, &DatabaseManager::registerStudentResult);
+
+    // 学生登录
+    connect(this, &DatabaseManager::loginStudentRequest, worker, &DatabaseWorker::onLoginStudent);
+    // 学生登录结果返回给 Manager
+    connect(worker, &DatabaseWorker::loginStudentResponse, this, &DatabaseManager::loginStudentResult);
 }

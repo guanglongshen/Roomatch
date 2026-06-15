@@ -41,6 +41,11 @@ signals:
     // 学生注册请求
     void registerStudentRequest(QTcpSocket *client, const USERINFO &info);
 
+    // 学生登录请求
+    void loginStudentRequest(QTcpSocket *client, const USERINFO &info);
+    // 学生登录结果
+    void loginStudentResult(QTcpSocket *client, const STATUS &status);
+
 
 private:
     DatabaseManager();

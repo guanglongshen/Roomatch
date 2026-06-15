@@ -13,6 +13,7 @@ SOURCES += \
     clientwindow.cpp \
     networkmanager.cpp \
     networkworker.cpp \
+    studenthomewidget.cpp \
     studentregisterwidget.cpp
 
 HEADERS += \
@@ -20,11 +21,13 @@ HEADERS += \
     loginwidget.h \
     networkmanager.h \
     networkworker.h \
+    studenthomewidget.h \
     studentregisterwidget.h
 
 FORMS += \
     clientwindow.ui \
     loginwidget.ui \
+    studenthomewidget.ui \
     studentregisterwidget.ui
 
 TRANSLATIONS += \

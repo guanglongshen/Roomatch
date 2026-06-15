@@ -15,6 +15,8 @@ public:
 signals:
     // 跳转注册页面
     void toRegisterPage();
+    // 跳转主页面
+    void toHomePage();
 
 public slots:
     void onTeacherDiscovered(const QString &name, const QString &ip, quint16 port);

@@ -31,7 +31,9 @@ void NetworkWorker::onSendLoginRequest(const QString &ip, quint16 port, const US
     tcpClient->connectToHost(ip, port);
     // 3s 连接宽容度
     if (!tcpClient->waitForConnected(3000)) {
-        STATUS fail = { 300, tr("网络连接失败！") };
+        NET_STATUS fail;
+        fail.code = 300;
+        strncpy_s(fail.msg, tr("网络连接失败！").toUtf8().constData(), sizeof(fail.msg) - 1);
         emit loginResponse(fail);
         return ;
     }
@@ -162,7 +164,7 @@ void NetworkWorker::onTcpReadyRead() {
         }
 
         if ((quint64)tcpClient->bytesAvailable() < (quint64)(sizeof(PACKETHEADER) + header.length)) {
-            qDebug() << "⚠️ 墙 3 放行失败：数据未接收全。期望总大小:" << sizeof(PACKETHEADER) + header.length
+            qDebug() << "⚠ 墙 3 放行失败：数据未接收全。期望总大小:" << sizeof(PACKETHEADER) + header.length
                      << " 当前只有:" << tcpClient->bytesAvailable() << "，等待下一次 readyRead...";
             return ;
         }
@@ -176,11 +178,17 @@ void NetworkWorker::onTcpReadyRead() {
             // 注册信息发回
             if (bodyData.size() >= sizeof(NET_STATUS)) {
                 NET_STATUS *resStatus = reinterpret_cast<NET_STATUS*>(bodyData.data());
-                qDebug() << "注册信息拿回";
+                // qDebug() << "注册信息拿回";
                 emit registerResponse(*resStatus);
             }
 
             tcpClient->disconnectFromHost();
+        } else if (header.type == MSG_LOGIN_RES) {
+            // 登录信息
+            if (bodyData.size() >= sizeof(NET_STATUS)) {
+                NET_STATUS *loginStatus = reinterpret_cast<NET_STATUS*>(bodyData.data());
+                emit loginResponse(*loginStatus);
+            }
         }
     }
 }

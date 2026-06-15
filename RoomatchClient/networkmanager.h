@@ -18,7 +18,6 @@ public:
 signals:
     void teacherDiscoveredUI(const QString &name, const QString &ip, quint16 port);
     void teacherDismissedUI(const QString &name, const QString &ip, quint16 port);
-    void loginResultUI(const STATUS &status);
 
     // 派发给子线程 worker 执行 登录，注册
     void loginRequest(const QString &ip, quint16 port, const USERINFO &info);
@@ -26,6 +25,7 @@ signals:
 
     // 登录注册的信号转发回 UI
     void registerReply(const NET_STATUS &status);
+    void loginReply(const NET_STATUS &status);
 private:
     NetworkManager();
     QThread *managerThread;

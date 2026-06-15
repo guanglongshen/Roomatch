@@ -70,8 +70,8 @@ StudentRegisterWidget::StudentRegisterWidget(QWidget *parent)
         info.username = username;
         info.pwd = pwd;
         info.type = 1;
-        qDebug() << "申请注册 connect(ui->registerBtn, &QPushButton::clicked, this, [this](){}";
-        qDebug() << "地址：" << teacherIP << ":" << teacherPort;
+        // qDebug() << "申请注册 connect(ui->registerBtn, &QPushButton::clicked, this, [this](){}";
+        // qDebug() << "地址：" << teacherIP << ":" << teacherPort;
         emit NetworkManager::instance()->registerRequest(teacherIP, teacherPort, info);
     });
 

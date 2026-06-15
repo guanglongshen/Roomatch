@@ -39,6 +39,12 @@ void ClientWindow::initConnect() {
     connect(ui->registerPage, &StudentRegisterWidget::toLoginPage, this, [this](){
         smoothChangePage(ui->registerPage, ui->loginPage);
     });
+
+    // 登录页面->主页面
+    connect(ui->loginPage, &LoginWidget::toHomePage, this, [this](){
+        smoothChangePage(ui->loginPage, ui->homePage);
+        ui->statusbar->showMessage("登录成功!", 2000);
+    });
 }
 
 void ClientWindow::initStackedWidget() {

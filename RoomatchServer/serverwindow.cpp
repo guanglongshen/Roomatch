@@ -99,10 +99,18 @@ void ServerWindow::initNet() {
     connect(netMgr, &NetworkManager::logNotify, logKeeper, &LogKeeper::addSystemLog);
     connect(netMgr, &NetworkManager::eventNotify, logKeeper, &LogKeeper::addEventLog);
 
+    // 网络处理学生端的请求
+
     // 网络层收到学生注册，传输给数据库处理
     connect(netMgr->getWorker(), &NetworkWorker::registerRequestToDatabase, DatabaseManager::instance(), &DatabaseManager::registerStudentRequest);
     // 数据库处理完毕，呼叫网络层传回
     connect(DatabaseManager::instance(), &DatabaseManager::registerStudentResult, netMgr->getWorker(), &NetworkWorker::onReplyRegisterResult);
+
+    // 网络层收到学生登录，传输给数据库处理
+    connect(netMgr->getWorker(), &NetworkWorker::loginRequestToDatabase, DatabaseManager::instance(), &DatabaseManager::loginStudentRequest);
+    // 数据库处理完毕，呼叫网络层传回
+    connect(DatabaseManager::instance(), &DatabaseManager::loginStudentResult, netMgr->getWorker(), &NetworkWorker::onReplyLoginResult);
+
 }
 
 void ServerWindow::initStackedWidget() {

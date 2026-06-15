@@ -110,6 +110,16 @@ void NetworkWorker::onRead() {
             emit logMessage(tr("[登录请求] 报文"), "received", "Net Server");
 
             // TODO 登录验证事项
+            USERINFO_PACKET *packet = reinterpret_cast<USERINFO_PACKET*>(bodyData.data());
+
+            // 转为本地业务结构体
+            USERINFO info;
+            info.username = QString::fromUtf8(packet->username);
+            info.pwd = QString::fromUtf8(packet->password);
+            info.type = packet->type;
+
+            // 发送给数据库处理登录信息做验证
+            emit loginRequestToDatabase(client, info);
         }
     }
 }
@@ -146,10 +156,35 @@ void NetworkWorker::onReplyRegisterResult(QTcpSocket *client, const STATUS &stat
     buffer.append(reinterpret_cast<const char*>(&header), sizeof(PACKETHEADER));
     buffer.append(reinterpret_cast<const char*>(&reply), sizeof(NET_STATUS));
 
-    qDebug() << "写回学生注册数据";
+    // qDebug() << "写回学生注册数据";
 
     client->write(buffer);
     client->disconnectFromHost();
+}
+
+void NetworkWorker::onReplyLoginResult(QTcpSocket *client, const STATUS &status) {
+    if (!clientSockets.contains(client)) return ;
+
+    PACKETHEADER header;
+    header.magic = MAGICNUM;
+    header.length = sizeof(NET_STATUS);
+    header.type = MSG_LOGIN_RES;
+
+    NET_STATUS reply;
+    memset(&reply, 0, sizeof(NET_STATUS));
+    reply.code = status.code;
+    strncpy_s(reply.msg, status.info.toUtf8().constData(), sizeof(reply.msg) - 1);
+
+    // 序列化
+    QByteArray buffer;
+    buffer.append(reinterpret_cast<const char*>(&header), sizeof(PACKETHEADER));
+    buffer.append(reinterpret_cast<const char*>(&reply), sizeof(NET_STATUS));
+
+    client->write(buffer);
+    // 登录失败的，TcpSocket 不留，断开连接
+    if (status.code != 0) {
+        client->disconnectFromHost();
+    }
 }
 
 void NetworkWorker::onSendBroadcast() {
