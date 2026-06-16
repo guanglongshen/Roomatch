@@ -14,6 +14,8 @@ HomeWidget::HomeWidget(QWidget *parent)
     ui->onlineTree->setRootIsDecorated(false);
     ui->onlineTree->setIndentation(0);                                              // 无缩进
 
+    ui->contestModeList->setCurrentRow(0);
+
     initConn();
 }
 

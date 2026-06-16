@@ -26,22 +26,104 @@ void DatabaseWorker::onInitializeDatabase() {
     if (db.open()) {
         // 创建若干初始表
         QSqlQuery query(db);
-        QString createTableSql = R"(
+
+        // 开启外键支持
+        query.exec("PRAGMA foreign_keys = ON;");
+
+        QString createAccountSql = R"(
             CREATE TABLE IF NOT EXISTS account (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,   -- id 默认自增长
                 username TEXT NOT NULL UNIQUE,          -- 用户名：不允许为空，且必须唯一
                 password TEXT NOT NULL,                 -- 密码：不允许为空
+                contribute INTEGER DEFAULT 0,           -- 教师贡献度，默认为 0，不影响已存在的数据读写
                 type INTEGER NOT NULL,                  -- 用户类型：0 代表教师，1 代表学生
                 last_login DATETIME,                    -- 记录最后一次登录时间
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP -- 账号创建时间
             )
         )";
 
-        if (query.exec(createTableSql)) {
-            emit logMessage(tr("account 数据表创建"), "ok", "Database");
+        if (query.exec(createAccountSql)) {
+            emit logMessage(tr("用户-数据表创建"), "ok", "Database");
         } else {
-            emit logMessage(tr("account 数据表创建"), db.lastError().text(), "Database");
+            emit logMessage(tr("用户-数据表创建"), db.lastError().text(), "Database");
             return ;
+        }
+
+        // 题目类型表
+        QString createProblemTypeSql = R"(
+            CREATE TABLE IF NOT EXISTS problem_types (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL UNIQUE               -- 题目类型
+            )
+        )";
+        if (query.exec(createProblemTypeSql)) {
+            emit logMessage(tr("题目类型-数据表创建"), "ok", "Database");
+        } else {
+            emit logMessage(tr("题目类型-数据表创建"), db.lastError().text(), "Databse");
+            return ;
+        }
+
+        // 题目表
+        QString createProblemSql = R"(
+            CREATE TABLE IF NOT EXISTS problemset (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT NOT NULL,                    -- 题目标题
+                difficulty INTEGER NOT NULL,            -- 题目难度
+                time_limit INTEGER NOT NULL,            -- 时间限制
+                memory_limit INTEGER NOT NULL,          -- 空间限制
+                type_id INTEGER NOT NULL,               -- 题目类型（外键）
+                description TEXT NOT NULL,              -- 题目描述
+                input_format TEXT,                      -- 输入格式
+                output_format TEXT,                     -- 输出格式
+                samples TEXT,                           -- 样例组
+                hint TEXT,                              -- 提示
+                testcase_path TEXT,                     -- 测试点本地路径
+                author_id INTEGER,                      -- 出题教师 ID（外键）
+
+                -- 外键联立，子 REFERENCE 父
+                FOREIGN KEY(type_id) REFERENCES problem_types(id) ON DELETE RESTRICT,
+                FOREIGN KEY(author_id) REFERENCES account(id) ON DELETE SET NULL
+            )
+        )";
+        if (query.exec(createProblemSql)) {
+            emit logMessage(tr("题库-数据表创建"), "ok", "Database");
+        } else {
+            emit logMessage(tr("题库-数据表创建"), db.lastError().text(), "Database");
+            return ;
+        }
+
+        // 预加载常用题型，当数据表内为空的时候
+        query.exec("SELECT COUNT(*) FROM problem_types");
+        if (query.next() && query.value(0).toInt() == 0) {
+            QStringList defaultTypes = { "2-sat", "binary search", "bitmasks", "brute force", "chinese remainder theorem",
+                                         "combinatorics", "constructive algorithms", "data structures", "dfs and similar",
+                                         "divide and conquer", "dp", "dsu", "expression parsing", "fft", "flows", "games",
+                                         "geometry", "graph matchings", "graphs", "greedy", "hashing", "implementation",
+                                         "interactive", "math", "matrices", "meet-in-the-middle", "number theory", "probabilities",
+                                         "schedules", "shortest paths", "sortings", "string suffix structures", "strings",
+                                         "ternary search", "trees", "two pointers"
+                                       };
+            db.transaction(); // 使用事务加速插入
+
+            bool success = true;
+            for (const QString &typenames : defaultTypes) {
+                query.prepare("INSERT INTO problem_types (name) VALUES (:name)");
+                query.bindValue(":name", typenames);
+                if (!query.exec()) {
+                    success = false;
+                    break;
+                }
+            }
+
+            if (success) {
+                db.commit();
+                emit logMessage(tr("初始化题目类型"), "ok", "Database");
+            } else {
+                db.rollback();
+                emit logMessage(tr("初始化题目类型"), "fail, rollbacked", "Database");
+            }
+        } else {
+            emit logMessage(tr("题目类型已存在"), "ok", "Database");
         }
     } else {
         emit logMessage(tr("数据库"), db.lastError().text(), "Database");
