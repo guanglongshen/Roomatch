@@ -16,10 +16,19 @@ HomeWidget::HomeWidget(QWidget *parent)
 
     ui->contestModeList->setCurrentRow(0);
 
+    if (problemDialog == nullptr) {
+        problemDialog = new AddProblem(this);
+    }
+
     initConn();
 }
 
 HomeWidget::~HomeWidget() {
+    if (problemDialog) {
+        delete problemDialog;
+        problemDialog = nullptr;
+    }
+
     delete ui;
 }
 
@@ -55,5 +64,11 @@ void HomeWidget::initConn() {
 
     // 学生状态更新的信号
     connect(NetworkManager::instance()->getWorker(), &NetworkWorker::studentStatusChanged, this, &HomeWidget::onUpdateStudentStatus);
+
+    // 点击添加题目
+    connect(ui->addProblemBtn, &QPushButton::clicked, this, [this](){
+        problemDialog->setWindowTitle(tr("添加题目"));
+        problemDialog->exec();
+    });
 }
 

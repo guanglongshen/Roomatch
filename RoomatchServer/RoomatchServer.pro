@@ -1,4 +1,4 @@
-QT += widgets sql network
+QT += widgets sql network webenginewidgets
 
 CONFIG += c++17
 
@@ -7,6 +7,7 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    addproblem.cpp \
     databasemanager.cpp \
     databaseworker.cpp \
     homewidget.cpp \
@@ -19,6 +20,7 @@ SOURCES += \
     serverwindow.cpp
 
 HEADERS += \
+    addproblem.h \
     databasemanager.h \
     databaseworker.h \
     homewidget.h \
@@ -30,6 +32,7 @@ HEADERS += \
     serverwindow.h
 
 FORMS += \
+    addproblem.ui \
     homewidget.ui \
     loginwidget.ui \
     logkeeper.ui \

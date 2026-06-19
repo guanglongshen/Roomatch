@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="katex/katex.min.css">
+    <script src="katex/katex.min.js"></script>
+    <script src="katex/contrib/auto-render.min.js"></script>
+
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 15px; color: #333; line-height: 1.6; }
+        h2 { color: #F02F2F; border-bottom: 1px solid #ddd; padding-bottom: 5px; }
+        .section { margin-bottom: 20px; }
+        pre { background: #f8f9fa; padding: 10px; border: 1px solid #e9ecef; border-radius: 4px; font-family: Consolas, monospace; }
+    </style>
+</head>
+<body>
+    <h1 id="title">Problem</h1>
+    
+    <div class="section">
+        <h2>Description</h2>
+        <div id="description"></div>
+    </div>
+    
+    <div class="section">
+        <h2>Input format</h2>
+        <div id="input_format"></div>
+    </div>
+    
+    <div class="section">
+        <h2>Output format</h2>
+        <div id="output_format"></div>
+    </div>
+
+    <div class="section">
+        <h2>Samples</h2>
+        <div id="samples"></div>
+    </div>
+
+    <div class="section">
+        <h2>Hint</h2>
+        <div id="hint"></div>
+    </div>
+
+    <script>
+        // 提供给 Qt 调用的 JS 函数，用来动态刷新内容
+        function updatePreview(title, desc, input, output, samples, hint) {
+            document.getElementById('title').innerText = title;
+            document.getElementById('description').innerHTML = desc;
+            document.getElementById('input_format').innerHTML = input;
+            document.getElementById('output_format').innerHTML = output;
+            document.getElementById('samples').innerHTML = samples;
+            document.getElementById('hint').innerHTML = hint;
+            
+            const targetIDs = ['title', 'description', 'input_format', 'output_format', 'hint'];
+
+            targetIDs.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    renderMathInElement(element, {
+                        delimiters: [
+                            {left: "$$", right: "$$", display: true},
+                            {left: "$", right: "$", display: false}
+                        ]
+                    });
+                }
+            });
+        }
+    </script>
+</body>
+</html>

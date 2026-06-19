@@ -2,6 +2,7 @@
 #define HOMEWIDGET_H
 
 #include <QWidget>
+#include "addproblem.h"
 
 namespace Ui { class HomeWidget; }
 
@@ -26,6 +27,9 @@ private:
     QString teacher;
 
     void initConn();// 常规信号
+
+    // 添加题目
+    AddProblem *problemDialog = nullptr;
 };
 
 #endif // HOMEWIDGET_H

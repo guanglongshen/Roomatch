@@ -185,7 +185,6 @@ void DatabaseWorker::onLoginUser(const USERINFO &loginInfo) {
     }
 
     QSqlQuery query(db);
-    // 分类处理
     // 处理教师
     if (loginInfo.type == 0) {
         query.prepare("SELECT password FROM account WHERE username = :username AND type = :type");
@@ -220,7 +219,6 @@ void DatabaseWorker::onLoginUser(const USERINFO &loginInfo) {
             emit eventMessage(tr("用户登录"), tr("wrong，%1 用户不存在").arg(loginInfo.username));
             return ;
         }
-    } else {// 处理学生登录
     }
 }
 
