@@ -51,4 +51,7 @@ DatabaseManager::DatabaseManager() {
     connect(this, &DatabaseManager::loginStudentRequest, worker, &DatabaseWorker::onLoginStudent);
     // 学生登录结果返回给 Manager
     connect(worker, &DatabaseWorker::loginStudentResponse, this, &DatabaseManager::loginStudentResult);
+
+    // 题目类型
+    connect(worker, &DatabaseWorker::problemTagBack, this, &DatabaseManager::problemTagNotify);
 }

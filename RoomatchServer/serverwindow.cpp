@@ -91,6 +91,30 @@ void ServerWindow::initConnection() {
         logKeeper->raise();
         logKeeper->activateWindow();
     });
+
+    // 初始化题目类型信号
+    connect(DatabaseManager::instance(), &DatabaseManager::problemTagNotify, this, [this](const QVector<QPair<QString, int>> &tags){
+        m_tags = tags;
+
+        if (ui->HomePage && ui->HomePage->getAddproblem()) {
+            AddProblem *target = ui->HomePage->getAddproblem();
+
+            target->clearTagBox();
+            for (const auto &item : std::as_const(m_tags)) {
+                target->appendToTagBox(item.first, item.second);
+            }
+        }
+    });
+    // 接收更新的信号
+    connect(ui->HomePage->getAddproblem(), &AddProblem::typeRefresh, this, [this](){
+        AddProblem *target = ui->HomePage->getAddproblem();
+
+        target->clearTagBox();
+
+        for (const auto &item : std::as_const(m_tags)) {
+            target->appendToTagBox(item.first, item.second);
+        }
+    });
 }
 
 void ServerWindow::initNet() {

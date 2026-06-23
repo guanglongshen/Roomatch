@@ -38,6 +38,9 @@ signals:
     void registerStudentResponse(QTcpSocket *client, const STATUS &code);
     // 学生登录返回信息
     void loginStudentResponse(QTcpSocket *client, const STATUS &code);
+
+    // 题目类型转发
+    void problemTagBack(const QVector<QPair<QString, int>> &tags);
 };
 
 #endif // DATABASEWORKER_H

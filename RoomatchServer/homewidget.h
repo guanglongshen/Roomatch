@@ -14,6 +14,7 @@ public:
     ~HomeWidget();
 
     void setTeacher(const QString &name);
+    AddProblem* getAddproblem() { return problemDialog; }
 
 signals:
     void quitLogin();

@@ -7,50 +7,212 @@
     <script src="katex/contrib/auto-render.min.js"></script>
 
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 15px; color: #333; line-height: 1.6; }
-        h2 { color: #F02F2F; border-bottom: 1px solid #ddd; padding-bottom: 5px; }
-        .section { margin-bottom: 20px; }
-        pre { background: #f8f9fa; padding: 10px; border: 1px solid #e9ecef; border-radius: 4px; font-family: Consolas, monospace; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            padding: 20px 25px;
+            color: #2d3748;
+            line-height: 1.6;
+            background-color: #ffffff;
+        }
+        h1 {
+            font-size: 28px;
+            color: #1a202c;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        .meta-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding: 12px 16px;
+            background-color: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .meta-item {
+            display: flex;
+            align-items: center;
+        }
+        .meta-label {
+            font-weight: 600;
+            color: #718096;
+            margin-right: 6px;
+        }
+        .badge {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            background-color: #edf2f7;
+            color: #4a5568;
+        }
+        h2 {
+            color: #E53E3E;
+            font-size: 18px;
+            font-weight: 600;
+            border-left: 4px solid #E53E3E;
+            padding-left: 10px;
+            margin-top: 30px;
+            margin-bottom: 12px;
+            text-transform: capitalize;
+        }
+        h4 {
+            font-size: 14px;
+            color: #4a5568;
+            margin: 15px 0 5px 0;
+        }
+        .section-content {
+            padding-left: 14px;
+            font-size: 15px;
+        }
+
+        pre {
+            background: #f8fafc;
+            padding: 12px 15px;
+            border: 1px solid #edf2f7;
+            border-radius: 6px;
+            font-family: 'Fira Code', Consolas, Monaco, 'Courier New', monospace;
+            font-size: 13.5px;
+            color: #1a202c;
+            margin: 5px 0 15px 0;
+            overflow-x: auto;
+        }
+        strong {
+            color: #4a5568;
+            font-size: 13px;
+        }
+
+        .sample-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            margin-bottom: 25px;
+            table-layout: fixed; /* 强制左右 1:1 等分 */
+        }
+        .sample-table th {
+            border: 1px solid #cbd5e0;
+            background-color: #f8fafc;
+            padding: 8px 12px;
+            text-align: left;
+            font-size: 14px;
+            color: #2d3748;
+            font-weight: 600;
+        }
+        .sample-table td {
+            border: 1px solid #cbd5e0;
+            padding: 0;
+            vertical-align: top;
+            background-color: #ffffff;
+        }
+        .sample-table pre {
+            margin: 0;
+            border: none;
+            background: transparent;
+            padding: 12px;
+            font-family: 'Fira Code', Consolas, Monaco, 'Courier New', monospace;
+            font-size: 13.5px;
+            color: #1a202c;
+            overflow-x: auto;
+            white-space: pre;
+        }
+        .copy-btn {
+            float: right; /* 让按钮乖乖靠到最右边 */
+            background-color: #ffffff;
+            border: 1px solid #cbd5e0;
+            border-radius: 4px;
+            padding: 2px 10px;
+            font-size: 12px;
+            cursor: pointer;
+            color: #4a5568;
+            transition: all 0.2s;
+        }
+        .copy-btn:hover { background-color: #edf2f7; }
+        .copy-btn.success { background-color: #48bb78; color: white; border-color: #48bb78; }
     </style>
 </head>
 <body>
     <h1 id="title">Problem</h1>
-    
-    <div class="section">
+
+    <div class="meta-container">
+        <div class="meta-item">
+            <span class="meta-label">Difficulty:</span>
+            <span id="difficulty" class="badge">Unrated</span>
+        </div>
+        <div class="meta-item">
+            <span class="meta-label">Time Limit:</span>
+            <span id="time_limit">1000</span> ms
+        </div>
+        <div class="meta-item">
+            <span class="meta-label">Memory Limit:</span>
+            <span id="memory_limit">512</span> MB
+        </div>
+        <div class="meta-item">
+            <span class="meta-label">Tag:</span>
+            <span id="tag" class="badge">None</span>
+        </div>
+    </div>
+
+    <div>
         <h2>Description</h2>
-        <div id="description"></div>
+        <div id="description" class="section-content"></div>
     </div>
-    
-    <div class="section">
+
+    <div>
         <h2>Input format</h2>
-        <div id="input_format"></div>
+        <div id="input_format" class="section-content"></div>
     </div>
-    
-    <div class="section">
+
+    <div>
         <h2>Output format</h2>
-        <div id="output_format"></div>
+        <div id="output_format" class="section-content"></div>
     </div>
 
-    <div class="section">
+    <div>
         <h2>Samples</h2>
-        <div id="samples"></div>
+        <div id="samples" class="section-content"></div>
     </div>
 
-    <div class="section">
+    <div>
         <h2>Hint</h2>
-        <div id="hint"></div>
+        <div id="hint" class="section-content"></div>
     </div>
 
     <script>
-        // 提供给 Qt 调用的 JS 函数，用来动态刷新内容
-        function updatePreview(title, desc, input, output, samples, hint) {
-            document.getElementById('title').innerText = title;
-            document.getElementById('description').innerHTML = desc;
+        function copyText(elementId, btn) {
+            const text = document.getElementById(elementId).innerText;
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                const oldText = btn.innerText;
+                btn.innerText = "Copied!";
+                btn.classList.add("success"); // 变绿效果
+                setTimeout(() => {
+                    btn.innerText = oldText;
+                    btn.classList.remove("success");
+                }, 1000);
+            } catch (err) {
+                console.error("Copy failed", err);
+            }
+            document.body.removeChild(textArea);
+        }
+
+        function updatePreview(title, difficulty, times, memory, tag, describe, input, output, samples, hint) {
+            document.getElementById('title').innerText = title || "Untitled Problem";
+            document.getElementById('difficulty').innerText = difficulty;
+            document.getElementById('time_limit').innerText = times;
+            document.getElementById('memory_limit').innerText = memory;
+            document.getElementById('tag').innerText = tag;
+
+            document.getElementById('description').innerHTML = describe;
             document.getElementById('input_format').innerHTML = input;
             document.getElementById('output_format').innerHTML = output;
             document.getElementById('samples').innerHTML = samples;
             document.getElementById('hint').innerHTML = hint;
-            
+
             const targetIDs = ['title', 'description', 'input_format', 'output_format', 'hint'];
 
             targetIDs.forEach(id => {

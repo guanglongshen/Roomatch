@@ -46,6 +46,9 @@ signals:
     // 学生登录结果
     void loginStudentResult(QTcpSocket *client, const STATUS &status);
 
+    // 题目类型转回
+    void problemTagNotify(const QVector<QPair<QString, int>> &tags);
+
 
 private:
     DatabaseManager();

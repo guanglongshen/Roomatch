@@ -125,6 +125,21 @@ void DatabaseWorker::onInitializeDatabase() {
         } else {
             emit logMessage(tr("题目类型已存在"), "ok", "Database");
         }
+
+
+        QVector<QPair<QString, int>> tags;
+        // 读取题目类型传给主界面待准备
+        query.prepare("SELECT id, name FROM problem_types ORDER BY name ASC");
+        if (query.exec()) {
+            while (query.next()) {
+                tags.append({query.value("name").toString(), query.value("id").toInt()});
+            }
+
+            emit problemTagBack(tags);
+            emit logMessage(tr("题目类型读取"), "ok", "Database");
+        } else {
+            emit logMessage(tr("数据库"), db.lastError().text(), "Database");
+        }
     } else {
         emit logMessage(tr("数据库"), db.lastError().text(), "Database");
     }

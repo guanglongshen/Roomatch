@@ -16,6 +16,9 @@ public:
     explicit ServerWindow(QWidget *parent = nullptr);
     ~ServerWindow() override;
 
+signals:
+
+
 private:
     Ui::ServerWindow *ui;
     LogKeeper *logKeeper = nullptr;
@@ -25,5 +28,7 @@ private:
     void initNet();
     void initStackedWidget();
     void smoothChangePage(QWidget *OLD, QWidget *NEW);
+
+    QVector<QPair<QString, int>> m_tags;
 };
 #endif // SERVERWINDOW_H

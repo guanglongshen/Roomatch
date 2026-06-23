@@ -17,6 +17,7 @@ SOURCES += \
     networkmanager.cpp \
     networkworker.cpp \
     registerwidget.cpp \
+    samples.cpp \
     serverwindow.cpp
 
 HEADERS += \
@@ -29,6 +30,7 @@ HEADERS += \
     networkmanager.h \
     networkworker.h \
     registerwidget.h \
+    samples.h \
     serverwindow.h
 
 FORMS += \
@@ -37,6 +39,7 @@ FORMS += \
     loginwidget.ui \
     logkeeper.ui \
     registerwidget.ui \
+    samples.ui \
     serverwindow.ui
 
 TRANSLATIONS += \
