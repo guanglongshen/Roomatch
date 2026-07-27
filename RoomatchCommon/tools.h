@@ -3,6 +3,8 @@
 
 #include <QObject>
 #include <QString>
+#include <QSettings>
+#include <QCoreApplication>
 
 class Tools : public QObject {
     Q_OBJECT
@@ -24,6 +26,15 @@ struct USERINFO {
 struct STATUS {
     int code;
     QString info;
+};
+
+// 配置系统
+class AppConfig {
+public:
+    static QSettings &settings() {
+        static QSettings instance(QCoreApplication::applicationDirPath() + "/config.ini", QSettings::IniFormat);
+        return instance;
+    }
 };
 
 #endif // TOOLS_H

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>762</width>
+    <width>866</width>
     <height>454</height>
    </rect>
   </property>
@@ -24,11 +24,11 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>386</width>
-        <height>423</height>
+        <width>392</width>
+        <height>440</height>
        </rect>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <layout class="QVBoxLayout" name="verticalLayout" stretch="1,0">
        <item>
         <layout class="QFormLayout" name="formLayout">
          <property name="labelAlignment">
@@ -232,6 +232,24 @@
          </item>
         </layout>
        </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,1">
+         <item>
+          <widget class="QPushButton" name="casePathChoose">
+           <property name="text">
+            <string>测试点数据配置</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="pathLabel">
+           <property name="text">
+            <string>Empty...</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
       </layout>
      </widget>
     </widget>
@@ -249,9 +267,9 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="cancelBtn">
+      <widget class="QPushButton" name="clearBtn">
        <property name="text">
-        <string>取消</string>
+        <string>清空编辑</string>
        </property>
       </widget>
      </item>

@@ -41,6 +41,9 @@ signals:
 
     // 题目类型转发
     void problemTagBack(const QVector<QPair<QString, int>> &tags);
+
+private:
+    int teacherID = 0;
 };
 
 #endif // DATABASEWORKER_H

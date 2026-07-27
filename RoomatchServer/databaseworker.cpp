@@ -202,7 +202,7 @@ void DatabaseWorker::onLoginUser(const USERINFO &loginInfo) {
     QSqlQuery query(db);
     // 处理教师
     if (loginInfo.type == 0) {
-        query.prepare("SELECT password FROM account WHERE username = :username AND type = :type");
+        query.prepare("SELECT password, id FROM account WHERE username = :username AND type = :type");
         query.bindValue(":username", loginInfo.username);
         query.bindValue(":type", loginInfo.type);
 
@@ -217,6 +217,8 @@ void DatabaseWorker::onLoginUser(const USERINFO &loginInfo) {
             if (dbPwd == loginInfo.pwd) {   // 密码正确
                 emit loginUserResponse(OK, loginInfo.username);
                 emit eventMessage(tr("用户登录"), tr("ok，%1 已登录").arg(loginInfo.username));
+
+                teacherID = query.value("id").toInt();
 
                 QSqlQuery updateQuery(db);
                 updateQuery.prepare("UPDATE account SET last_login = DATETIME('now', 'localtime') WHERE username = :username AND type = :type");

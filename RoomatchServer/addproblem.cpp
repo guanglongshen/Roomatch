@@ -1,6 +1,9 @@
 #include "addproblem.h"
 #include "ui_addproblem.h"
+#include "tools.h"
 
+#include <QDir>
+#include <QFileDialog>
 #include <QJsonObject>
 #include <QSqlQuery>
 
@@ -31,6 +34,44 @@ AddProblem::AddProblem(QWidget *parent)
 
     // 网页加载完成后再刷新一次
     connect(m_webView, &QWebEngineView::loadFinished, this, &AddProblem::updateLivePreview);
+
+    // 点击清空编辑的按钮后，所有文本都删除
+    connect(ui->clearBtn, &QPushButton::clicked, this, [this](){
+        ui->problemNameEdit->clear();
+        ui->difficulty->setCurrentIndex(0);
+        ui->times->setValue(1000);
+        ui->spaces->setValue(512);
+        ui->tagBox->setCurrentIndex(-1);
+        ui->describeEdit->clear();
+        ui->inputEdit->clear();
+        ui->outputEdit->clear();
+        ui->hintEdit->clear();
+
+        ui->clearAllSamplesBtn->click();
+    });
+
+    // 点击测试点配置按钮，预先保存测试点的磁盘路径
+    connect(ui->casePathChoose, &QPushButton::clicked, this, [this](){
+        QString lastFolderPath = AppConfig::settings().value("last_folder_path", QDir::homePath()).toString();
+
+        // 打开文件对话框
+        QString dir = QFileDialog::getExistingDirectory(
+            this,
+            "选择文件夹",
+            lastFolderPath,
+            QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks
+        );
+
+        if (!dir.isEmpty()) {
+            ui->pathLabel->setText(dir);
+            AppConfig::settings().setValue("last_folder_path", dir);
+        } else {
+            ui->pathLabel->setText("Empty...");
+            AppConfig::settings().setValue("last_folder_path", "");
+        }
+    });
+
+    // 点击保存按钮后，将这个题目存入数据库
 }
 
 AddProblem::~AddProblem() {
