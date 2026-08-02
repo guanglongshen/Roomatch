@@ -1,10 +1,13 @@
 #include "addproblem.h"
 #include "ui_addproblem.h"
 #include "tools.h"
+#include "databasemanager.h"
 
 #include <QDir>
 #include <QFileDialog>
+#include <QJsonArray>
 #include <QJsonObject>
+#include <QMessageBox>
 #include <QSqlQuery>
 
 AddProblem::AddProblem(QWidget *parent)
@@ -72,6 +75,54 @@ AddProblem::AddProblem(QWidget *parent)
     });
 
     // 点击保存按钮后，将这个题目存入数据库
+    connect(ui->saveBtn, &QPushButton::clicked, this, [this](){
+        // 题目名称不可空
+        if (ui->problemNameEdit->text().isEmpty()) {
+            QMessageBox::warning(this, tr("保存题目"), tr("题目名称不可为空，请输入题目名称（可以与之前题目名重复）"));
+            return ;
+        }
+
+        PROBLEMDETAIL detail;
+        detail.title = ui->problemNameEdit->text();
+        detail.difficulty = ui->difficulty->currentText().toInt();
+        detail.time_limit = ui->times->value();
+        detail.memory_limit = ui->spaces->value();
+        detail.type_id = ui->tagBox->currentIndex();
+        detail.description = ui->describeEdit->toPlainText();
+        detail.input_format = ui->inputEdit->toPlainText();
+        detail.output_format = ui->outputEdit->toPlainText();
+        detail.hint = ui->hintEdit->toPlainText();
+
+        QJsonArray jsonArray;
+        for (const auto &sample : std::as_const(samplesList)) {
+            if (sample->getInput().isEmpty() && sample->getOutput().isEmpty()) continue;
+            QJsonObject obj;
+            obj["input"] = sample->getInput();
+            obj["output"] = sample->getOutput();
+            jsonArray.append(obj);
+        }
+        QJsonDocument doc(jsonArray);
+        QString jsonString = doc.toJson(QJsonDocument::Compact);
+        detail.samples = jsonString;
+
+        if (ui->pathLabel->text() != "Empty...") {
+            detail.testcase_path = ui->pathLabel->text();
+        }
+
+        // 准备保存题目到数据库中
+        emit DatabaseManager::instance()->saveProblemRequest(detail);
+    });
+
+    // 监听保存题目后的状态
+    connect(DatabaseManager::instance(), &DatabaseManager::saveProblemResult, this, [this](const STATUS &status){
+        if (status.code == 0) {
+            QMessageBox::information(this, "保存题目", status.info);
+            ui->clearBtn->click();
+            this->close();
+        } else {
+            QMessageBox::warning(this, "保存题目", status.info);
+        }
+    });
 }
 
 AddProblem::~AddProblem() {

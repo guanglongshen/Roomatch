@@ -331,3 +331,38 @@ void DatabaseWorker::onLoginStudent(QTcpSocket *client, const USERINFO &info) {
         emit eventMessage(tr("学生登录"), tr("登录失败，%1 用户不存在").arg(info.username));
     }
 }
+
+void DatabaseWorker::onSaveProblem(const PROBLEMDETAIL &detail) {
+    QSqlDatabase db = QSqlDatabase::database("database_worker");
+
+    if (!db.isOpen()) {
+        STATUS err = { 500, tr("教师端数据库未就绪") };
+        emit saveProblemResponse(err);
+        return ;
+    }
+
+    QSqlQuery query(db);
+    query.prepare("INSERT INTO problemset (title, difficulty, time_limit, memory_limit, type_id, description, input_format, output_format, samples, hint, testcase_path, author_id) VALUES (:title, :difficulty, :time_limit, :memory_limit, :type_id, :description, :input_format, :output_format, :samples, :hint, :testcase_path, :author_id)");
+    query.bindValue(":title", detail.title);
+    query.bindValue(":difficulty", detail.difficulty);
+    query.bindValue(":time_limit", detail.time_limit);
+    query.bindValue(":memory_limit", detail.memory_limit);
+    query.bindValue(":type_id", detail.type_id);
+    query.bindValue(":description", detail.description);
+    query.bindValue(":input_format", detail.input_format);
+    query.bindValue(":output_format", detail.output_format);
+    query.bindValue(":samples", detail.samples);
+    query.bindValue(":hint", detail.hint);
+    query.bindValue(":testcase_path", detail.testcase_path);
+    query.bindValue(":author_id", teacherID); // 教师在登录的时候，database.h 已经记录了教师的 ID，当然是该教师保存题目
+
+    if (!query.exec()) {
+        STATUS fail = { 502, db.lastError().text() };
+        emit saveProblemResponse(fail);
+        return ;
+    }
+
+    STATUS ok{ 0, tr("%1 题目已保存！").arg(detail.title) };
+    emit saveProblemResponse(ok);
+    emit eventMessage(tr("保存题目"), tr("%1 已保存").arg(detail.title));
+}

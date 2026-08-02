@@ -49,6 +49,11 @@ signals:
     // 题目类型转回
     void problemTagNotify(const QVector<QPair<QString, int>> &tags);
 
+    // 保存题目请求
+    void saveProblemRequest(const PROBLEMDETAIL &detail);
+    // 保存题目结果
+    void saveProblemResult(const STATUS &status);
+
 
 private:
     DatabaseManager();

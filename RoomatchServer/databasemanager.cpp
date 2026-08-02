@@ -54,4 +54,8 @@ DatabaseManager::DatabaseManager() {
 
     // 题目类型
     connect(worker, &DatabaseWorker::problemTagBack, this, &DatabaseManager::problemTagNotify);
+
+    // 保存题目
+    connect(this, &DatabaseManager::saveProblemRequest, worker, &DatabaseWorker::onSaveProblem);
+    connect(worker, &DatabaseWorker::saveProblemResponse, this, &DatabaseManager::saveProblemResult);
 }

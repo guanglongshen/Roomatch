@@ -37,4 +37,11 @@ public:
     }
 };
 
+struct PROBLEMDETAIL {
+    // 题目提供者不需要在保存前调取，登录的时候数据库已经验证，在那个地方记录了谁登录进来，用它的ID即可
+    QString title;
+    int difficulty, time_limit, memory_limit, type_id;
+    QString description, input_format, output_format, samples, hint, testcase_path;
+};
+
 #endif // TOOLS_H

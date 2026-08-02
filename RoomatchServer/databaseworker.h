@@ -23,6 +23,9 @@ public:
     // 登录学生用户
     void onLoginStudent(QTcpSocket *client, const USERINFO &info);
 
+    // 保存题目
+    void onSaveProblem(const PROBLEMDETAIL &detail);
+
 signals:
     // 所有对数据库核心操作返回的信息
     void logMessage(const QString &event, const QString &statusText, const QString &source);
@@ -41,6 +44,9 @@ signals:
 
     // 题目类型转发
     void problemTagBack(const QVector<QPair<QString, int>> &tags);
+
+    // 保存题目返回状态
+    void saveProblemResponse(const STATUS &code);
 
 private:
     int teacherID = 0;
